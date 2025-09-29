@@ -2,7 +2,7 @@
 
 ## Overview
 
-This document provides a detailed record of the implementation process for the TechSubs frontend client, describing the technical decisions, configurations, and features developed in each branch throughout Sprint 5 Frontend. It serves as a technical continuation of the main README, focusing on the evolution of the React application, architectural decisions, and the rationale behind each major development step.
+This document records the implementation of the TechSubs frontend React application. It covers the technical decisions, configurations, and features developed throughout Sprint 5 Frontend, including the landing page implementation and component architecture.
 
 ## Project Context
 
@@ -23,18 +23,18 @@ Frontend requirements:
 - Integration with all backend API endpoints
 - Export functionality for reports and data analysis
 
-## Technology Stack Decisions
+## Technology Stack
 
-The frontend implementation follows modern React development practices while maintaining simplicity appropriate for a bootcamp-level project:
+Technologies used in the React frontend:
 
 - React 18 with functional components and hooks
-- Create React App for project bootstrapping (despite deprecation, chosen for educational consistency)
-- Tailwind CSS via CDN for rapid styling without build complexity
-- Axios for HTTP client with interceptors for token management
-- React Router v6 for client-side routing
-- React Hook Form for form handling and validation
-- React Testing Library for component testing
-- Environment-based configuration for API integration
+- Create React App for project setup
+- Tailwind CSS via CDN for styling
+- Axios for API communication
+- React Router v6 for navigation
+- React Hook Form for form handling
+- React Testing Library with Jest for testing
+- Environment variables for configuration
 
 ## Implementation
 
@@ -49,4 +49,23 @@ Tailwind CSS was configured via CDN to avoid build configuration complexity whil
 API integration was prepared through axios configuration with automatic token handling and error management. Environment variables were configured to support different deployment environments. Testing was implemented to validate all configuration aspects.
 
 More details: [README_setup_react_project_base.md](development/README_setup_react_project_base.md)
+
+## Branch feat/auth-landing-pages
+
+Implements the TechSubs landing page as a single-screen layout without vertical scroll. The page replicates the design from the Blade template with React components.
+
+Components implemented:
+- Navigation: Sticky header with glassmorphism effect and authentication buttons
+- HeroSection: Two-column layout with title and dashboard mockup
+- FeaturesSection: Three feature cards with gradient backgrounds
+- Footer: Simple footer with backdrop blur
+
+Key features:
+- Compact spacing system (py-4) to eliminate scroll
+- Embedded SVG icons for performance
+- Responsive design with mobile-first approach
+- Dashboard mockup showing realistic service pricing
+- Gradient styling matching the original design
+
+More details: [README_feat_auth_landing_pages.md](development/README_feat_auth_landing_pages.md)
 
