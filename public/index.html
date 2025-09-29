@@ -11,19 +11,40 @@
     />
     <link rel="apple-touch-icon" href="%PUBLIC_URL%/logo192.png" />
     <link rel="manifest" href="%PUBLIC_URL%/manifest.json" />
+    <link rel="preconnect" href="https://fonts.bunny.net">
+    <link href="https://fonts.bunny.net/css?family=figtree:400,500,600&display=swap" rel="stylesheet">
     <script src="https://cdn.tailwindcss.com"></script>
     <script>
       tailwind.config = {
         theme: {
           extend: {
+            fontFamily: {
+              sans: ['Figtree', 'sans-serif'],
+            },
             colors: {
-              purple: {
-                600: '#7C3AED',
-                100: '#E9D5FF',
+              'pastel-purple': {
+                50: '#f5f0ff',
+                100: '#ebe0ff',
+                200: '#d7c3ff',
+                300: '#c8a9ff',
+                400: '#bf9bff',
+                500: '#a56eff',
+                600: '#9147ff',
+                700: '#7c2dff',
+                800: '#6b28d9',
+                900: '#5a21b6',
               },
-              orange: {
-                500: '#F97316',
-                100: '#FED7AA',
+              'pastel-salmon': {
+                50: '#fff3f0',
+                100: '#ffe5e0',
+                200: '#ffddd5',
+                300: '#ffc4b5',
+                400: '#ff9d85',
+                500: '#ff7654',
+                600: '#ff5722',
+                700: '#f4511e',
+                800: '#e64a19',
+                900: '#d84315',
               }
             }
           }
@@ -39,7 +60,7 @@
       work correctly both with client-side routing and a non-root public URL.
       Learn how to configure a non-root public URL by running `npm run build`.
     -->
-    <title>React App</title>
+    <title>TechSubs - Manage your tech subscriptions</title>
   </head>
   <body>
     <noscript>You need to enable JavaScript to run this app.</noscript>
