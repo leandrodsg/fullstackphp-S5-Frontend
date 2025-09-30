@@ -69,3 +69,24 @@ Key features:
 
 More details: [README_feat_auth_landing_pages.md](development/README_feat_auth_landing_pages.md)
 
+## Branch feat/auth-dashboard-system
+
+Implements the complete authentication system and dashboard interface following the provided wireframes. The branch integrates JWT token management, protected routes, and a functional dashboard with subscription management.
+
+Authentication system implemented:
+- AuthContext with React Context API for global state management
+- JWT token persistence in localStorage with automatic validation
+- Login/Register forms with React Hook Form validation
+- Protected routes with automatic redirection
+- Token refresh and logout functionality
+
+Dashboard features implemented:
+- Summary cards showing monthly totals and subscription counts
+- Recent subscriptions table with service details and actions
+- Responsive layout matching wireframe specifications
+- Integration with /subscriptions and /profile API endpoints
+- Mock data fallback for development without backend
+
+The implementation uses React Context API to manage authentication state globally, avoiding prop drilling between components. Tailwind CSS maintains visual consistency with the previously developed landing page. React Router v6 handles navigation between public and protected pages. Tests cover critical scenarios like login, dashboard, and route protection. The API layer uses axios with interceptors to automatically inject JWT tokens in requests.
+
+More details: [README_feat_auth_dashboard_system.md](development/README_feat_auth_dashboard_system.md)

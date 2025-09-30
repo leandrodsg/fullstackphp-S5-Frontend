@@ -70,28 +70,29 @@ Tarefas:
 - Validar testes passando
 
 ### 2. Branch: feat/auth-landing-pages
-Implementar autenticação e páginas públicas conforme wireframes.
+Implementar landing page conforme wireframes e style guide.
 
 Tarefas:
-- Escrever testes para autenticação e landing
-- Criar AuthContext para gerenciar login/logout
-- Implementar Landing Page com gradiente roxo/laranja:
+- Escrever testes para landing page
+- Criar Landing Page conforme wireframe:
   - Hero section "Organize all your tech subscriptions"
   - Cards de features (Centralized Management, Financial Control, Made for Devs)
   - Mockup da aplicação no lado direito
-- Criar páginas de Login e Register:
-  - Formulário centralizado conforme wireframe
-  - Integração com POST /api/v1/login e /api/v1/register
-  - Links de navegação entre login/register
-- Configurar rotas públicas e protegidas
-- Implementar persistência de token
-- Validar testes passando
+  - Gradiente roxo/laranja conforme style guide
+- Validar todos os testes passando
 
-### 3. Branch: feat/dashboard-layout
-Implementar dashboard principal com sidebar e cards de resumo.
+### 3. Branch: feat/auth-dashboard-system
+Implementar dashboard principal, layout da aplicação e sistema de autenticação.
 
 Tarefas:
-- Escrever testes para dashboard
+- Escrever testes para dashboard e autenticação
+- Implementar sistema de autenticação:
+  - Criar AuthContext para gerenciar login/logout
+  - Criar páginas de Login e Register com formulário centralizado
+  - Integração com POST /api/v1/login e /api/v1/register
+  - Links de navegação entre login/register
+  - Configurar rotas públicas e protegidas
+  - Implementar persistência de token
 - Criar layout principal:
   - Sidebar fixa com navegação (Dashboard, Services, Subscriptions, Reports, Profile)
   - Header com nome do usuário e logout
@@ -104,7 +105,7 @@ Tarefas:
 - Integrar com endpoints:
   - GET /api/v1/subscriptions (para cards e tabela)
   - GET /api/v1/profile (dados do usuário)
-- Validar testes passando
+- Validar todos os testes passando
 
 ### 4. Branch: feat/services-crud
 Implementar gestão completa de serviços conforme wireframe.
