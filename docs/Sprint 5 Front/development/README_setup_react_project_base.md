@@ -12,15 +12,6 @@ Set up the React project base with essential dependencies and folder structure f
 - Created React 18 project with Create React App
 - Installed dependencies: react-router-dom, axios, react-hook-form
 
-### Folder Structure
-```
-src/
-  components/  # Reusable UI components
-  pages/       # Page-level components  
-  services/    # API configurations
-  utils/       # Helper functions
-```
-
 ### Tailwind CSS
 - Added via CDN in public/index.html
 - Custom theme with purple (#7C3AED) and orange (#F97316) colors
@@ -40,11 +31,6 @@ src/
    - File changed: src/App.js
    - Updated to use Tailwind CSS classes
    - Added project branding and visual feedback for successful setup
-
-9. CSS cleanup and optimization
-### Styling Updates
-- Updated src/index.css - removed custom classes, kept basic body styles
-- Tailwind handles all utility styling
 
 ### Testing
 
