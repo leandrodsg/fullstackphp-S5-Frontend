@@ -5,53 +5,12 @@ import LandingPage from './pages/LandingPage';
 import Login from './pages/Login';
 import Register from './pages/Register';
 import Dashboard from './pages/Dashboard';
+import MyServices from './pages/MyServices';
+import CreateService from './pages/CreateService';
+import ServiceDetails from './pages/ServiceDetails';
+import EditService from './pages/EditService';
 import AppLayout from './components/AppLayout';
 import ProtectedRoute from './components/ProtectedRoute';
-
-// Mock data for dashboard testing
-const mockDashboardData = {
-  monthlyTotalEUR: 247.00,
-  monthlyTotalUSD: 267.42,
-  activeSubscriptions: 12,
-  totalServices: 18,
-  recentSubscriptions: [
-    {
-      id: 1,
-      service: { name: 'GitHub', category: 'Development' },
-      plan: 'Pro',
-      price: 4.00,
-      status: 'active'
-    },
-    {
-      id: 2,
-      service: { name: 'ChatGPT', category: 'AI Tools' },
-      plan: 'Plus',
-      price: 20.00,
-      status: 'active'
-    },
-    {
-      id: 3,
-      service: { name: 'Vercel', category: 'Hosting' },
-      plan: 'Pro',
-      price: 20.00,
-      status: 'paused'
-    }
-  ],
-  recentServices: [
-    {
-      id: 1,
-      name: 'Vercel',
-      category: 'Hosting',
-      website: 'vercel.com'
-    },
-    {
-      id: 2,
-      name: 'Netlify',
-      category: 'Hosting',
-      website: 'netlify.com'
-    }
-  ]
-};
 
 function App() {
   return (
@@ -67,7 +26,7 @@ function App() {
           <Route path="/dashboard" element={
             <ProtectedRoute>
               <AppLayout>
-                <Dashboard data={mockDashboardData} />
+                <Dashboard />
               </AppLayout>
             </ProtectedRoute>
           } />
@@ -76,9 +35,31 @@ function App() {
           <Route path="/services" element={
             <ProtectedRoute>
               <AppLayout>
-                <div className="p-8">
-                  <h1 className="text-2xl font-bold text-gray-900">Services (Coming Soon)</h1>
-                </div>
+                <MyServices />
+              </AppLayout>
+            </ProtectedRoute>
+          } />
+          
+          <Route path="/services/create" element={
+            <ProtectedRoute>
+              <AppLayout>
+                <CreateService />
+              </AppLayout>
+            </ProtectedRoute>
+          } />
+          
+          <Route path="/services/:id" element={
+            <ProtectedRoute>
+              <AppLayout>
+                <ServiceDetails />
+              </AppLayout>
+            </ProtectedRoute>
+          } />
+          
+          <Route path="/services/:id/edit" element={
+            <ProtectedRoute>
+              <AppLayout>
+                <EditService />
               </AppLayout>
             </ProtectedRoute>
           } />

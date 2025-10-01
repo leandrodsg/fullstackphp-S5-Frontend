@@ -4,14 +4,14 @@ import { MemoryRouter } from 'react-router';
 import Login from '../pages/Login';
 import { AuthProvider } from '../contexts/AuthContext';
 
-// Mock do useNavigate
+// Mock useNavigate
 const mockNavigate = jest.fn();
 jest.mock('react-router', () => ({
   ...jest.requireActual('react-router'),
   useNavigate: () => mockNavigate,
 }));
 
-// Mock do AuthContext
+// Mock AuthContext
 const mockLogin = jest.fn();
 jest.mock('../contexts/AuthContext', () => ({
   ...jest.requireActual('../contexts/AuthContext'),

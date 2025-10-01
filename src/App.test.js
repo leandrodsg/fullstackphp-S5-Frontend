@@ -1,7 +1,7 @@
 import { render, screen } from '@testing-library/react';
 import App from './App';
 
-// Mock do AuthContext
+// Mock AuthContext
 jest.mock('./contexts/AuthContext', () => ({
   AuthProvider: ({ children }) => children,
   useAuth: () => ({
@@ -13,7 +13,7 @@ jest.mock('./contexts/AuthContext', () => ({
   })
 }));
 
-// Mock do react-router
+// Mock react-router
 jest.mock('react-router', () => ({
   BrowserRouter: ({ children }) => children,
   Routes: ({ children }) => children,

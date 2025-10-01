@@ -1,13 +1,14 @@
 import React from 'react';
 import { render, screen, waitFor } from '@testing-library/react';
+import { BrowserRouter } from 'react-router';
 import Dashboard from '../pages/Dashboard';
 import { AuthProvider } from '../contexts/AuthContext';
 import api from '../services/api';
 
-// Mock do módulo api
+// Mock api module
 jest.mock('../services/api');
 
-// Mock do AuthContext
+// Mock AuthContext
 const mockUser = { id: 1, name: 'Test User', email: 'test@example.com' };
 jest.mock('../contexts/AuthContext', () => ({
   ...jest.requireActual('../contexts/AuthContext'),
@@ -23,22 +24,24 @@ describe('Dashboard Component', () => {
 
   const renderDashboard = () => {
     return render(
-      <AuthProvider>
-        <Dashboard />
-      </AuthProvider>
+      <BrowserRouter>
+        <AuthProvider>
+          <Dashboard />
+        </AuthProvider>
+      </BrowserRouter>
     );
   };
 
-  test('deve mostrar loading inicialmente', () => {
-    // Mock para simular delay na API
-    api.get.mockImplementation(() => new Promise(() => {})); // Promise que nunca resolve
+  test('should show loading initially', () => {
+    // Mock to simulate API delay
+    api.get.mockImplementation(() => new Promise(() => {})); // Promise that never resolves
 
     renderDashboard();
 
     expect(screen.getByText('Loading dashboard...')).toBeInTheDocument();
   });
 
-  test('deve renderizar dashboard com dados da API', async () => {
+  test('should render dashboard with API data', async () => {
     const mockSubscriptions = [
       { 
         id: 1, 
@@ -56,14 +59,22 @@ describe('Dashboard Component', () => {
       }
     ];
 
+    const mockServices = [
+      { id: 1, name: 'Netflix', category: 'Entertainment', description: 'Streaming service' },
+      { id: 2, name: 'Spotify', category: 'Music', description: 'Music streaming' }
+    ];
+
     const mockProfile = { id: 1, name: 'Test User', email: 'test@example.com' };
 
     api.get.mockImplementation((url) => {
       if (url === '/subscriptions') {
-        return Promise.resolve({ data: { subscriptions: mockSubscriptions } });
+        return Promise.resolve({ data: { data: mockSubscriptions } });
       }
       if (url === '/profile') {
-        return Promise.resolve({ data: { user: mockProfile } });
+        return Promise.resolve({ data: { data: { user: mockProfile } } });
+      }
+      if (url === '/services') {
+        return Promise.resolve({ data: { data: mockServices } });
       }
     });
 
@@ -73,80 +84,144 @@ describe('Dashboard Component', () => {
       expect(screen.getByText('Welcome to TechSubs, Test User!')).toBeInTheDocument();
     });
 
-    // Verificar cards de estatísticas
+    // Check statistics cards
     expect(screen.getByText('€25.98')).toBeInTheDocument(); // Total EUR
     expect(screen.getByText('Active Subscriptions').closest('div').querySelector('p')).toHaveTextContent('2'); // Active subscriptions
+    expect(screen.getByText('Available Services').closest('div').querySelector('p')).toHaveTextContent('2'); // Available services
 
-    // Verificar tabela de subscriptions
-    expect(screen.getByText('Netflix')).toBeInTheDocument();
-    expect(screen.getByText('Spotify')).toBeInTheDocument();
-    expect(screen.getByText('Entertainment')).toBeInTheDocument();
-    expect(screen.getByText('Music')).toBeInTheDocument();
+    // Check subscriptions table - using getAllByText since services appear in both tables
+    expect(screen.getAllByText('Netflix')).toHaveLength(2); // Appears in both subscriptions and services tables
+    expect(screen.getAllByText('Spotify')).toHaveLength(2); // Appears in both subscriptions and services tables
+    expect(screen.getAllByText('Entertainment')).toHaveLength(2); // Category appears in both tables
+    expect(screen.getAllByText('Music')).toHaveLength(2); // Category appears in both tables
   });
 
-  test('deve usar dados mock quando API falha', async () => {
+  test('should show empty state when no subscriptions', async () => {
+    const mockServices = [
+      { id: 1, name: 'Netflix', category: 'Entertainment', description: 'Streaming service' }
+    ];
+
+    const mockProfile = { id: 1, name: 'Test User', email: 'test@example.com' };
+
+    api.get.mockImplementation((url) => {
+      if (url === '/subscriptions') {
+        return Promise.resolve({ data: { data: [] } });
+      }
+      if (url === '/profile') {
+        return Promise.resolve({ data: { data: { user: mockProfile } } });
+      }
+      if (url === '/services') {
+        return Promise.resolve({ data: { data: mockServices } });
+      }
+    });
+
+    renderDashboard();
+
+    await waitFor(() => {
+      expect(screen.getByText('No Subscriptions Yet')).toBeInTheDocument();
+      expect(screen.getByText('Start subscribing to services to see them here.')).toBeInTheDocument();
+    });
+  });
+
+  test('should show empty state when no services', async () => {
+    const mockSubscriptions = [
+      { 
+        id: 1, 
+        service: { name: 'Netflix', category: 'Entertainment' }, 
+        plan: 'Premium', 
+        price: 15.99, 
+        status: 'active' 
+      }
+    ];
+
+    const mockProfile = { id: 1, name: 'Test User', email: 'test@example.com' };
+
+    api.get.mockImplementation((url) => {
+      if (url === '/subscriptions') {
+        return Promise.resolve({ data: { data: mockSubscriptions } });
+      }
+      if (url === '/profile') {
+        return Promise.resolve({ data: { data: { user: mockProfile } } });
+      }
+      if (url === '/services') {
+        return Promise.resolve({ data: { data: [] } });
+      }
+    });
+
+    renderDashboard();
+
+    await waitFor(() => {
+      expect(screen.getByText('No Services Available')).toBeInTheDocument();
+      expect(screen.getByText('Create your first service to get started.')).toBeInTheDocument();
+    });
+  });
+
+  test('should handle API error gracefully', async () => {
     api.get.mockRejectedValue(new Error('API Error'));
 
     renderDashboard();
 
     await waitFor(() => {
-      expect(screen.getByText('Failed to load dashboard data. Please try again.')).toBeInTheDocument();
-    });
-
-    // Deve mostrar dados mock
-    await waitFor(() => {
-      expect(screen.getByText('Netflix')).toBeInTheDocument();
-      expect(screen.getByText('Spotify')).toBeInTheDocument();
-      expect(screen.getByText('Office 365')).toBeInTheDocument();
+      expect(screen.getByText('Error loading dashboard')).toBeInTheDocument();
+      expect(screen.getByText('Failed to load dashboard data')).toBeInTheDocument();
     });
   });
 
-  test('deve calcular totais corretamente', async () => {
+  test('should calculate total spending correctly', async () => {
     const mockSubscriptions = [
       { id: 1, price: 10.00, status: 'active' },
       { id: 2, price: 15.50, status: 'active' },
-      { id: 3, price: 5.00, status: 'pending' } // Não deve ser incluído no total
+      { id: 3, price: 5.00, status: 'pending' } // Should not be included in total
     ];
+
+    const mockProfile = { id: 1, name: 'Test User', email: 'test@example.com' };
 
     api.get.mockImplementation((url) => {
       if (url === '/subscriptions') {
-        return Promise.resolve({ data: { subscriptions: mockSubscriptions } });
+        return Promise.resolve({ data: { data: mockSubscriptions } });
       }
       if (url === '/profile') {
-        return Promise.resolve({ data: { user: mockUser } });
+        return Promise.resolve({ data: { data: { user: mockProfile } } });
+      }
+      if (url === '/services') {
+        return Promise.resolve({ data: { data: [] } });
       }
     });
 
     renderDashboard();
 
     await waitFor(() => {
-      expect(screen.getByText('€25.50')).toBeInTheDocument(); // Total EUR apenas ativos
-      expect(screen.getByText('2')).toBeInTheDocument(); // Apenas subscriptions ativas
+      expect(screen.getByText('€25.50')).toBeInTheDocument(); // Only active subscriptions
     });
   });
 
-  test('deve exibir badges de status corretamente', async () => {
+  test('should display status badges correctly', async () => {
     const mockSubscriptions = [
       { 
         id: 1, 
-        service: { name: 'Netflix' }, 
+        service: { name: 'Netflix', category: 'Entertainment' }, 
         status: 'active',
         price: 10.00
       },
       { 
         id: 2, 
-        service: { name: 'Spotify' }, 
+        service: { name: 'Spotify', category: 'Music' }, 
         status: 'pending',
         price: 5.00
       }
     ];
 
+    const mockProfile = { id: 1, name: 'Test User', email: 'test@example.com' };
+
     api.get.mockImplementation((url) => {
       if (url === '/subscriptions') {
-        return Promise.resolve({ data: { subscriptions: mockSubscriptions } });
+        return Promise.resolve({ data: { data: mockSubscriptions } });
       }
       if (url === '/profile') {
-        return Promise.resolve({ data: { user: mockUser } });
+        return Promise.resolve({ data: { data: { user: mockProfile } } });
+      }
+      if (url === '/services') {
+        return Promise.resolve({ data: { data: [] } });
       }
     });
 
@@ -158,13 +233,24 @@ describe('Dashboard Component', () => {
     });
   });
 
-  test('deve mostrar seção de serviços disponíveis', async () => {
+  test('should show available services section', async () => {
+    const mockServices = [
+      { id: 1, name: 'GitHub Pro', category: 'Development', description: 'Code hosting' },
+      { id: 2, name: 'Slack', category: 'Communication', description: 'Team chat' },
+      { id: 3, name: 'Notion', category: 'Productivity', description: 'Note taking' }
+    ];
+
+    const mockProfile = { id: 1, name: 'Test User', email: 'test@example.com' };
+
     api.get.mockImplementation((url) => {
       if (url === '/subscriptions') {
-        return Promise.resolve({ data: { subscriptions: [] } });
+        return Promise.resolve({ data: { data: [] } });
       }
       if (url === '/profile') {
-        return Promise.resolve({ data: { user: mockUser } });
+        return Promise.resolve({ data: { data: { user: mockProfile } } });
+      }
+      if (url === '/services') {
+        return Promise.resolve({ data: { data: mockServices } });
       }
     });
 
@@ -178,39 +264,54 @@ describe('Dashboard Component', () => {
     });
   });
 
-  test('deve gerar iniciais dos serviços corretamente', async () => {
+  test('should generate service initials correctly', async () => {
     const mockSubscriptions = [
       { 
         id: 1, 
-        service: { name: 'Netflix' }, 
+        service: { name: 'Netflix', category: 'Entertainment' }, 
         status: 'active',
         price: 10.00
       }
     ];
 
+    const mockProfile = { id: 1, name: 'Test User', email: 'test@example.com' };
+
     api.get.mockImplementation((url) => {
       if (url === '/subscriptions') {
-        return Promise.resolve({ data: { subscriptions: mockSubscriptions } });
+        return Promise.resolve({ data: { data: mockSubscriptions } });
       }
       if (url === '/profile') {
-        return Promise.resolve({ data: { user: mockUser } });
+        return Promise.resolve({ data: { data: { user: mockProfile } } });
+      }
+      if (url === '/services') {
+        return Promise.resolve({ data: { data: [] } });
       }
     });
 
     renderDashboard();
 
     await waitFor(() => {
-      expect(screen.getByText('NE')).toBeInTheDocument(); // Iniciais de Netflix
+      expect(screen.getByText('NE')).toBeInTheDocument(); // Netflix initials
     });
   });
 
-  test('deve mostrar links de ação nas tabelas', async () => {
+  test('should show action links in tables', async () => {
+    const mockServices = [
+      { id: 1, name: 'GitHub Pro', category: 'Development', description: 'Code hosting' },
+      { id: 2, name: 'Slack', category: 'Communication', description: 'Team chat' }
+    ];
+
+    const mockProfile = { id: 1, name: 'Test User', email: 'test@example.com' };
+
     api.get.mockImplementation((url) => {
       if (url === '/subscriptions') {
-        return Promise.resolve({ data: { subscriptions: [] } });
+        return Promise.resolve({ data: { data: [] } });
       }
       if (url === '/profile') {
-        return Promise.resolve({ data: { user: mockUser } });
+        return Promise.resolve({ data: { data: { user: mockProfile } } });
+      }
+      if (url === '/services') {
+        return Promise.resolve({ data: { data: mockServices } });
       }
     });
 
@@ -225,17 +326,22 @@ describe('Dashboard Component', () => {
     });
   });
 
-  test('deve mostrar conversão USD corretamente', async () => {
+  test('should show USD conversion correctly', async () => {
     const mockSubscriptions = [
-      { id: 1, price: 10.00, status: 'active' }
+      { id: 1, price: 10.00, status: 'active', service: { name: 'Netflix', category: 'Entertainment' } }
     ];
+
+    const mockProfile = { id: 1, name: 'Test User', email: 'test@example.com' };
 
     api.get.mockImplementation((url) => {
       if (url === '/subscriptions') {
-        return Promise.resolve({ data: { subscriptions: mockSubscriptions } });
+        return Promise.resolve({ data: { data: mockSubscriptions } });
       }
       if (url === '/profile') {
-        return Promise.resolve({ data: { user: mockUser } });
+        return Promise.resolve({ data: { data: { user: mockProfile } } });
+      }
+      if (url === '/services') {
+        return Promise.resolve({ data: { data: [] } });
       }
     });
 

@@ -1,36 +1,45 @@
 import React, { useState, useEffect } from 'react';
 import { useAuth } from '../contexts/AuthContext';
+import { Link, useNavigate } from 'react-router';
 import api from '../services/api';
 
 const Dashboard = () => {
   const { user } = useAuth();
+  const navigate = useNavigate();
   const [subscriptions, setSubscriptions] = useState([]);
   const [profile, setProfile] = useState(null);
+  const [availableServices, setAvailableServices] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
 
-  // Fetch data from APIs
+
+
   useEffect(() => {
     const fetchData = async () => {
       try {
         setLoading(true);
         setError(null);
 
-        // Fetch subscriptions and profile data
-        const [subscriptionsResponse, profileResponse] = await Promise.all([
+        const [subscriptionsResponse, profileResponse, servicesResponse] = await Promise.all([
           api.get('/subscriptions'),
-        api.get('/profile')
+          api.get('/profile'),
+          api.get('/services')
         ]);
 
-        setSubscriptions(subscriptionsResponse.data.subscriptions || []);
-        setProfile(profileResponse.data.user || user);
+        if (subscriptionsResponse.data?.data) {
+          setSubscriptions(subscriptionsResponse.data.data);
+        }
+
+        if (profileResponse.data?.data?.user) {
+          setProfile(profileResponse.data.data.user);
+        }
+
+        if (servicesResponse.data?.data) {
+          setAvailableServices(servicesResponse.data.data);
+        }
       } catch (error) {
-        console.error('Failed to fetch dashboard data:', error);
-        setError('Failed to load dashboard data. Please try again.');
-        
-        // Fallback to mock data if API fails
-        setSubscriptions(mockSubscriptions);
-        setProfile(user);
+        console.error('Error loading data:', error);
+        setError('Failed to load dashboard data');
       } finally {
         setLoading(false);
       }
@@ -39,88 +48,10 @@ const Dashboard = () => {
     fetchData();
   }, [user]);
 
-  // Mock data as fallback
-  const mockSubscriptions = [
-    { 
-      id: 1, 
-      service: { name: 'Netflix', category: 'Entertainment' }, 
-      plan: 'Premium', 
-      price: 15.99, 
-      status: 'active' 
-    },
-    { 
-      id: 2, 
-      service: { name: 'Spotify', category: 'Music' }, 
-      plan: 'Premium', 
-      price: 9.99, 
-      status: 'active' 
-    },
-    { 
-      id: 3, 
-      service: { name: 'Office 365', category: 'Productivity' }, 
-      plan: 'Business', 
-      price: 12.50, 
-      status: 'active' 
-    },
-    { 
-      id: 4, 
-      service: { name: 'Figma Pro', category: 'Design' }, 
-      plan: 'Professional', 
-      price: 15.00, 
-      status: 'pending' 
-    },
-    { 
-      id: 5, 
-      service: { name: 'Adobe CC', category: 'Design' }, 
-      plan: 'All Apps', 
-      price: 25.99, 
-      status: 'active' 
-    },
-  ];
-
-  // Calculate totals from real data
   const activeSubscriptions = subscriptions.filter(sub => sub.status === 'active');
   const monthlyTotalEUR = activeSubscriptions.reduce((total, sub) => total + (sub.price || 0), 0);
-  const monthlyTotalUSD = monthlyTotalEUR * 1.09; // Approximate conversion
+  const monthlyTotalUSD = monthlyTotalEUR * 1.09;
   const totalServices = subscriptions.length;
-
-  const availableServices = [
-    { 
-      id: 1, 
-      name: 'GitHub Pro', 
-      category: 'Development', 
-      description: 'Advanced GitHub features for developers',
-      website: 'github.com'
-    },
-    { 
-      id: 2, 
-      name: 'Slack', 
-      category: 'Communication', 
-      description: 'Team communication and collaboration',
-      website: 'slack.com'
-    },
-    { 
-      id: 3, 
-      name: 'Notion', 
-      category: 'Productivity', 
-      description: 'All-in-one workspace for notes and docs',
-      website: 'notion.so'
-    },
-    { 
-      id: 4, 
-      name: 'Canva Pro', 
-      category: 'Design', 
-      description: 'Professional design tools and templates',
-      website: 'canva.com'
-    },
-    { 
-      id: 5, 
-      name: 'Zoom Pro', 
-      category: 'Communication', 
-      description: 'Video conferencing and webinar platform',
-      website: 'zoom.us'
-    },
-  ];
 
   const getServiceInitials = (serviceName) => {
     return serviceName.substring(0, 2).toUpperCase();
@@ -234,13 +165,13 @@ const Dashboard = () => {
         </div>
 
         {/* Recent Subscriptions */}
-        {subscriptions.length > 0 && (
-          <div className="bg-gradient-to-r from-purple-50 to-purple-100 overflow-hidden shadow-sm sm:rounded-lg mb-6 border border-purple-200">
-            <div className="p-4">
-              <div className="mb-3">
-                <h3 className="text-lg font-semibold text-purple-900">Recent Subscriptions</h3>
-              </div>
-              <div className="bg-white rounded-lg overflow-hidden shadow-sm">
+        <div className="bg-gradient-to-r from-purple-50 to-purple-100 overflow-hidden shadow-sm sm:rounded-lg mb-6 border border-purple-200">
+          <div className="p-4">
+            <div className="mb-3">
+              <h3 className="text-lg font-semibold text-purple-900">Recent Subscriptions</h3>
+            </div>
+            <div className="bg-white rounded-lg overflow-hidden shadow-sm">
+              {subscriptions.length > 0 ? (
                 <div className="overflow-x-auto">
                   <table className="w-full table-fixed divide-y divide-purple-100">
                     <thead className="bg-purple-50 border-b border-purple-100">
@@ -289,12 +220,18 @@ const Dashboard = () => {
                           </td>
                           <td className="px-3 py-3 whitespace-nowrap text-center text-sm font-medium">
                             <div className="flex justify-center space-x-2">
-                              <a href="#" className="text-purple-600 hover:text-purple-900 text-xs">
+                              <button 
+                                onClick={() => navigate(`/subscriptions/${subscription.id}`)}
+                                className="text-purple-600 hover:text-purple-900 text-xs"
+                              >
                                 View
-                              </a>
-                              <a href="#" className="text-purple-600 hover:text-purple-900 text-xs">
+                              </button>
+                              <button 
+                                onClick={() => navigate(`/subscriptions/${subscription.id}/edit`)}
+                                className="text-purple-600 hover:text-purple-900 text-xs"
+                              >
                                 Edit
-                              </a>
+                              </button>
                             </div>
                           </td>
                         </tr>
@@ -302,24 +239,34 @@ const Dashboard = () => {
                     </tbody>
                   </table>
                 </div>
-              </div>
-              <div className="mt-3">
-                <a href="/subscriptions" className="text-purple-600 hover:text-purple-800 text-sm font-medium">
-                  View all subscriptions →
-                </a>
-              </div>
+              ) : (
+                <div className="p-8 text-center">
+                  <div className="w-16 h-16 mx-auto mb-4 bg-purple-100 rounded-full flex items-center justify-center">
+                    <svg className="w-8 h-8 text-purple-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M9 5H7a2 2 0 00-2 2v10a2 2 0 002 2h8a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2"></path>
+                    </svg>
+                  </div>
+                  <h4 className="text-lg font-medium text-gray-900 mb-2">No Subscriptions Yet</h4>
+                  <p className="text-gray-600">Start subscribing to services to see them here.</p>
+                </div>
+              )}
+            </div>
+            <div className="mt-3">
+              <Link to="/subscriptions" className="text-purple-600 hover:text-purple-800 text-sm font-medium">
+                View all subscriptions →
+              </Link>
             </div>
           </div>
-        )}
+        </div>
 
         {/* Recent Services */}
-        {availableServices.length > 0 && (
-          <div className="bg-gradient-to-r from-orange-50 to-orange-100 overflow-hidden shadow-sm sm:rounded-lg mb-6 border border-orange-200">
-            <div className="p-4">
-              <div className="mb-3">
-                <h3 className="text-lg font-semibold text-orange-900">Recent Services</h3>
-              </div>
-              <div className="bg-white rounded-lg overflow-hidden shadow-sm">
+        <div className="bg-gradient-to-r from-orange-50 to-orange-100 overflow-hidden shadow-sm sm:rounded-lg mb-6 border border-orange-200">
+          <div className="p-4">
+            <div className="mb-3">
+              <h3 className="text-lg font-semibold text-orange-900">Recent Services</h3>
+            </div>
+            <div className="bg-white rounded-lg overflow-hidden shadow-sm">
+              {availableServices.length > 0 ? (
                 <div className="overflow-x-auto">
                   <table className="w-full table-fixed divide-y divide-orange-100">
                     <thead className="bg-orange-50 border-b border-orange-100">
@@ -331,7 +278,7 @@ const Dashboard = () => {
                       </tr>
                     </thead>
                     <tbody className="bg-white divide-y divide-orange-50">
-                      {availableServices.map((service) => (
+                      {availableServices.slice(0, 5).map((service) => (
                         <tr key={service.id} className="hover:bg-orange-50 transition duration-150">
                           <td className="px-4 py-3 whitespace-nowrap">
                             <div className="flex items-center">
@@ -353,13 +300,23 @@ const Dashboard = () => {
                           </td>
                           <td className="px-3 py-3 text-center text-sm text-gray-900">
                             <div className="truncate">
-                              {service.description.length > 40 ? service.description.substring(0, 40) + '...' : service.description}
+                              {service.description && service.description.length > 40 ? service.description.substring(0, 40) + '...' : service.description || 'No description'}
                             </div>
                           </td>
                           <td className="px-3 py-3 whitespace-nowrap text-center text-sm font-medium">
                             <div className="flex justify-center space-x-2">
-                              <a href="#" className="text-orange-600 hover:text-orange-900 text-xs">View</a>
-                              <a href="#" className="text-orange-600 hover:text-orange-900 text-xs">Edit</a>
+                              <button 
+                                onClick={() => navigate(`/services/${service.id}`)}
+                                className="text-orange-600 hover:text-orange-900 text-xs"
+                              >
+                                View
+                              </button>
+                              <button 
+                                onClick={() => navigate(`/services/${service.id}/edit`)}
+                                className="text-orange-600 hover:text-orange-900 text-xs"
+                              >
+                                Edit
+                              </button>
                             </div>
                           </td>
                         </tr>
@@ -367,15 +324,25 @@ const Dashboard = () => {
                     </tbody>
                   </table>
                 </div>
-              </div>
-              <div className="mt-3">
-                <a href="/services" className="text-orange-600 hover:text-orange-800 text-sm font-medium">
-                  View all services →
-                </a>
-              </div>
+              ) : (
+                <div className="p-8 text-center">
+                  <div className="w-16 h-16 mx-auto mb-4 bg-orange-100 rounded-full flex items-center justify-center">
+                    <svg className="w-8 h-8 text-orange-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10"></path>
+                    </svg>
+                  </div>
+                  <h4 className="text-lg font-medium text-gray-900 mb-2">No Services Available</h4>
+                  <p className="text-gray-600">Create your first service to get started.</p>
+                </div>
+              )}
+            </div>
+            <div className="mt-3">
+              <Link to="/services" className="text-orange-600 hover:text-orange-800 text-sm font-medium">
+                View all services →
+              </Link>
             </div>
           </div>
-        )}
+        </div>
           </>
         )}
       </div>
