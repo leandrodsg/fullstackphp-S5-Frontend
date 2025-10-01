@@ -4,14 +4,14 @@ import { MemoryRouter } from 'react-router';
 import Register from '../pages/Register';
 import { AuthProvider } from '../contexts/AuthContext';
 
-// Mock do useNavigate
+// Mock useNavigate
 const mockNavigate = jest.fn();
 jest.mock('react-router', () => ({
   ...jest.requireActual('react-router'),
   useNavigate: () => mockNavigate,
 }));
 
-// Mock do AuthContext
+// Mock AuthContext
 const mockRegister = jest.fn();
 jest.mock('../contexts/AuthContext', () => ({
   ...jest.requireActual('../contexts/AuthContext'),
@@ -115,7 +115,7 @@ describe('Register Component', () => {
     });
   });
 
-  test('deve exibir erros quando registro falha', async () => {
+  test('should display errors when registration fails', async () => {
     const mockErrors = {
       name: ['Name is required'],
       email: ['Email already exists'],
@@ -141,7 +141,7 @@ describe('Register Component', () => {
   });
 
   test('deve mostrar estado de loading durante submissão', async () => {
-    // Simular delay no register
+    // Simulate register delay
     mockRegister.mockImplementation(() => 
       new Promise(resolve => setTimeout(() => resolve({ success: true }), 100))
     );
