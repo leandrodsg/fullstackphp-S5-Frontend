@@ -22,16 +22,13 @@ export const AuthProvider = ({ children }) => {
       const savedToken = localStorage.getItem('auth_token');
       if (savedToken) {
         try {
-          // Set token in API headers
           api.defaults.headers.common['Authorization'] = `Bearer ${savedToken}`;
           
-          // Verify token and get user data
           const response = await api.get('/profile');
           setUser(response.data.user);
           setToken(savedToken);
         } catch (error) {
           console.error('Token validation failed:', error);
-          // Clear invalid token
           localStorage.removeItem('auth_token');
           delete api.defaults.headers.common['Authorization'];
           setToken(null);
@@ -52,7 +49,7 @@ export const AuthProvider = ({ children }) => {
         remember
       });
 
-      const { user: userData, token: access_token } = response.data.data;
+      const { token: access_token } = response.data.data;
 
       // Store token
       localStorage.setItem('auth_token', access_token);
@@ -60,15 +57,16 @@ export const AuthProvider = ({ children }) => {
       // Set token in API headers
       api.defaults.headers.common['Authorization'] = `Bearer ${access_token}`;
       
-      // Update state
-      setUser(userData);
       setToken(access_token);
+      
+      const profileResponse = await api.get('/profile');
+      const userData = profileResponse.data.data.user;
+      setUser(userData);
 
       return { success: true, user: userData };
     } catch (error) {
       console.error('Login failed:', error);
       
-      // Handle validation errors
       if (error.response?.status === 422) {
         return {
           success: false,
@@ -101,7 +99,7 @@ export const AuthProvider = ({ children }) => {
         password_confirmation: passwordConfirmation
       });
 
-      const { user: userData, token: access_token } = response.data.data;
+      const { token: access_token } = response.data.data;
 
       // Store token
       localStorage.setItem('auth_token', access_token);
@@ -109,15 +107,16 @@ export const AuthProvider = ({ children }) => {
       // Set token in API headers
       api.defaults.headers.common['Authorization'] = `Bearer ${access_token}`;
       
-      // Update state
-      setUser(userData);
       setToken(access_token);
+      
+      const profileResponse = await api.get('/profile');
+      const userData = profileResponse.data.data.user;
+      setUser(userData);
 
       return { success: true, user: userData };
     } catch (error) {
       console.error('Registration failed:', error);
       
-      // Handle validation errors
       if (error.response?.status === 422) {
         return {
           success: false,
@@ -135,15 +134,12 @@ export const AuthProvider = ({ children }) => {
 
   const logout = async () => {
     try {
-      // Call logout endpoint if token exists
       if (token) {
         await api.post('/logout');
       }
     } catch (error) {
       console.error('Logout API call failed:', error);
-      // Continue with local logout even if API call fails
     } finally {
-      // Clear local storage and state
       localStorage.removeItem('auth_token');
       delete api.defaults.headers.common['Authorization'];
       setUser(null);
