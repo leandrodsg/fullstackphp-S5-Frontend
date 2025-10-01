@@ -90,3 +90,25 @@ Dashboard features implemented:
 The implementation uses React Context API to manage authentication state globally, avoiding prop drilling between components. Tailwind CSS maintains visual consistency with the previously developed landing page. React Router v6 handles navigation between public and protected pages. Tests cover critical scenarios like login, dashboard, and route protection. The API layer uses axios with interceptors to automatically inject JWT tokens in requests.
 
 More details: [README_feat_auth_dashboard_system.md](development/README_feat_auth_dashboard_system.md)
+
+## Branch feat/service-crud-system
+
+Implements the complete service management system with full CRUD operations for technology services. The branch extends the existing authentication and dashboard infrastructure with service management capabilities following modern React patterns and REST API principles.
+
+Service management features implemented:
+- CreateService: Form-based service creation with validation
+- EditService: Dynamic service editing with pre-populated data
+- MyServices: Paginated service listing with search and management actions
+- ServiceDetails: Service information display with actions
+
+Technical implementations:
+- Form validation system with real-time feedback and server integration
+- API integration layer with full CRUD endpoint support
+- Component-level state management following React best practices
+- Comprehensive testing coverage including unit and integration tests
+- Performance optimizations with React.memo, useCallback, and useMemo
+- Security considerations with input validation and authentication integration
+
+The implementation provides a complete service lifecycle management system that integrates seamlessly with the existing authentication and dashboard components. All forms include validation, error handling, and user feedback mechanisms. The API integration follows REST principles with proper error handling and loading states.
+
+More details: [README_feat_service_crud_system.md](development/README_feat_service_crud_system.md)
