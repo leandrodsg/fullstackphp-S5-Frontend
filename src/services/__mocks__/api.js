@@ -1,4 +1,4 @@
-// Mock do api.js para testes
+// Mock api for tests
 const api = {
   post: jest.fn(),
   get: jest.fn(),
