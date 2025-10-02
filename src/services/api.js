@@ -82,4 +82,60 @@ export const subscriptionAPI = {
   getStats: () => api.get('/subscriptions/stats')
 };
 
+// Reports API functions
+export const getReports = async (filters = {}) => {
+  // This function is deprecated - use subscriptionAPI.getAll() instead
+  console.warn('getReports is deprecated. Use subscriptionAPI.getAll() instead.');
+  return subscriptionAPI.getAll();
+};
+
+export const exportReports = async (filters = {}) => {
+  try {
+    // Get all subscriptions using the correct endpoint
+    const response = await subscriptionAPI.getAll();
+    let subscriptions = response.data || [];
+    
+    // Apply filters
+    if (filters.dateFrom) {
+      const filterDate = new Date(filters.dateFrom);
+      subscriptions = subscriptions.filter(sub => {
+        const subDate = new Date(sub.created_at);
+        return subDate >= filterDate;
+      });
+    }
+    
+    if (filters.service && filters.service !== 'all') {
+      subscriptions = subscriptions.filter(sub => 
+        sub.service_name && sub.service_name.toLowerCase().includes(filters.service.toLowerCase())
+      );
+    }
+    
+    if (filters.status && filters.status !== 'all') {
+      subscriptions = subscriptions.filter(sub => sub.status === filters.status);
+    }
+    
+    // Generate CSV content
+    const csvHeaders = ['Service Name', 'Price', 'Billing Cycle', 'Status', 'Start Date', 'Next Billing'];
+    const csvRows = subscriptions.map(sub => [
+      sub.service_name || 'N/A',
+      sub.price || '0',
+      sub.billing_cycle || 'monthly',
+      sub.status || 'active',
+      sub.created_at || 'N/A',
+      sub.next_billing_date || 'N/A'
+    ]);
+    
+    const csvContent = [csvHeaders, ...csvRows]
+      .map(row => row.map(field => `"${field}"`).join(','))
+      .join('\n');
+    
+    // Create blob
+    const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
+    return blob;
+  } catch (error) {
+    console.error('Error exporting reports:', error);
+    throw error;
+  }
+};
+
 export default api;

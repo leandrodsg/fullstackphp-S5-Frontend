@@ -163,7 +163,9 @@ const ServiceDetails = () => {
             <div className="bg-orange-50 p-4 rounded-lg border border-orange-200">
               <div className="flex items-center justify-between">
                 <span className="text-sm font-semibold text-orange-700">Created At</span>
-                <span className="text-sm font-bold text-orange-900">{service.created_at}</span>
+                <span className="text-sm font-bold text-orange-900">
+                  {service.created_at ? new Date(service.created_at).toLocaleDateString() : 'Unknown'}
+                </span>
               </div>
             </div>
 
@@ -171,7 +173,9 @@ const ServiceDetails = () => {
             <div className="bg-orange-50 p-4 rounded-lg border border-orange-200">
               <div className="flex items-center justify-between">
                 <span className="text-sm font-semibold text-orange-700">Last Updated</span>
-                <span className="text-sm font-bold text-orange-900">{service.updated_at}</span>
+                <span className="text-sm font-bold text-orange-900">
+                  {service.updated_at ? new Date(service.updated_at).toLocaleDateString() : 'Unknown'}
+                </span>
               </div>
             </div>
           </div>

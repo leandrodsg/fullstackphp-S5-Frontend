@@ -13,6 +13,7 @@ import MySubscriptions from './pages/MySubscriptions';
 import CreateSubscription from './pages/CreateSubscription';
 import SubscriptionDetails from './pages/SubscriptionDetails';
 import EditSubscription from './pages/EditSubscription';
+import Reports from './pages/Reports';
 import AppLayout from './components/AppLayout';
 import ProtectedRoute from './components/ProtectedRoute';
 
@@ -103,9 +104,7 @@ function App() {
           <Route path="/reports" element={
             <ProtectedRoute>
               <AppLayout>
-                <div className="p-8">
-                  <h1 className="text-2xl font-bold text-gray-900">Reports (Coming Soon)</h1>
-                </div>
+                <Reports />
               </AppLayout>
             </ProtectedRoute>
           } />

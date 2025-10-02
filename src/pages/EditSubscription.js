@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate, useParams } from 'react-router';
 import { subscriptionAPI, serviceAPI } from '../services/api';
+import { calculateBillingCycleFromDates } from '../utils/billingCycleUtils';
 
 const EditSubscription = () => {
   const navigate = useNavigate();
@@ -14,7 +15,7 @@ const EditSubscription = () => {
     plan: '',
     price: '',
     currency: 'USD',
-    next_billing_date: '',
+    billing_cycle: 'monthly',
     status: 'active'
   });
   const [errors, setErrors] = useState({});
@@ -33,12 +34,19 @@ const EditSubscription = () => {
 
         if (subscriptionResponse.data?.data) {
           const subscription = subscriptionResponse.data.data;
+          
+          // Calculate billing cycle if not provided by backend
+          let billingCycle = subscription.billing_cycle;
+          if (!billingCycle && subscription.created_at && subscription.next_billing_date) {
+            billingCycle = calculateBillingCycleFromDates(subscription.created_at, subscription.next_billing_date);
+          }
+          
           setFormData({
             service_id: subscription.service_id || '',
             plan: subscription.plan || '',
             price: subscription.price || '',
             currency: subscription.currency || 'USD',
-            next_billing_date: subscription.next_billing_date ? subscription.next_billing_date.split('T')[0] : '',
+            billing_cycle: billingCycle || 'monthly',
             status: subscription.status || 'active'
           });
         }
@@ -74,12 +82,22 @@ const EditSubscription = () => {
       newErrors.price = 'Price must be greater than 0';
     }
 
-    if (!formData.next_billing_date) {
-      newErrors.next_billing_date = 'Next billing date is required';
-    }
-
     setErrors(newErrors);
     return Object.keys(newErrors).length === 0;
+  };
+
+  // Calculate next billing date based on billing cycle
+  const calculateNextBillingDate = (billingCycle) => {
+    const today = new Date();
+    const nextBilling = new Date(today);
+    
+    if (billingCycle === 'annual') {
+      nextBilling.setFullYear(today.getFullYear() + 1);
+    } else {
+      nextBilling.setMonth(today.getMonth() + 1);
+    }
+    
+    return nextBilling.toISOString().split('T')[0];
   };
 
   const handleInputChange = (e) => {
@@ -111,7 +129,8 @@ const EditSubscription = () => {
     try {
       const subscriptionData = {
         ...formData,
-        price: parseFloat(formData.price)
+        price: parseFloat(formData.price),
+        next_billing_date: calculateNextBillingDate(formData.billing_cycle)
       };
 
       await subscriptionAPI.update(id, subscriptionData);
@@ -132,7 +151,12 @@ const EditSubscription = () => {
 
   const statusOptions = [
     { value: 'active', label: 'Active' },
-    { value: 'canceled', label: 'Canceled' }
+    { value: 'cancelled', label: 'Cancelled' }
+  ];
+
+  const billingCycleOptions = [
+    { value: 'monthly', label: 'Monthly' },
+    { value: 'annual', label: 'Annual' }
   ];
 
   const currencyOptions = [
@@ -144,13 +168,13 @@ const EditSubscription = () => {
     return (
       <div className="p-1 sm:p-2 lg:p-4">
         <div className="max-w-4xl mx-auto">
-          <div className="bg-white rounded-lg shadow p-6 border border-orange-100">
+          <div className="bg-white rounded-lg shadow p-6 border border-purple-100">
             <div className="animate-pulse">
-              <div className="h-8 bg-orange-200 rounded w-1/3 mx-auto mb-4"></div>
-              <div className="h-4 bg-orange-100 rounded w-1/4 mx-auto mb-6"></div>
+              <div className="h-8 bg-purple-200 rounded w-1/3 mx-auto mb-4"></div>
+              <div className="h-4 bg-purple-100 rounded w-1/4 mx-auto mb-6"></div>
               <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                <div className="h-16 bg-orange-50 rounded"></div>
-                <div className="h-16 bg-orange-50 rounded"></div>
+                <div className="h-16 bg-purple-50 rounded"></div>
+                <div className="h-16 bg-purple-50 rounded"></div>
               </div>
             </div>
           </div>
@@ -163,16 +187,16 @@ const EditSubscription = () => {
     return (
       <div className="p-1 sm:p-2 lg:p-4">
         <div className="max-w-4xl mx-auto">
-          <div className="bg-white rounded-lg shadow p-6 border border-orange-100 text-center">
-            <h2 className="text-xl font-medium text-orange-800 mb-4">Error Loading Subscription</h2>
-            <p className="text-orange-600 mb-6">{error}</p>
-            <button
-              onClick={() => navigate('/subscriptions')}
-              className="bg-orange-500 hover:bg-orange-600 text-white px-4 py-2 rounded-lg font-medium text-sm"
-            >
-              ← Back to Subscriptions
-            </button>
-          </div>
+          <div className="bg-white rounded-lg shadow p-6 border border-purple-100 text-center">
+        <h2 className="text-xl font-medium text-purple-800 mb-4">Error Loading Subscription</h2>
+        <p className="text-purple-600 mb-6">{error}</p>
+        <button
+          onClick={() => navigate('/subscriptions')}
+          className="bg-purple-500 hover:bg-purple-600 text-white px-4 py-2 rounded-lg font-medium text-sm"
+        >
+          ← Back to Subscriptions
+        </button>
+      </div>
         </div>
       </div>
     );
@@ -326,30 +350,46 @@ const EditSubscription = () => {
                 </select>
               </div>
 
-              {/* Next Billing Date */}
+              {/* Billing Cycle */}
               <div className="bg-purple-50 p-4 rounded-lg border border-purple-200">
-                <label htmlFor="next_billing_date" className="block text-sm font-semibold text-purple-700 mb-2">
-                  Next Billing Date *
+                <label htmlFor="billing_cycle" className="block text-sm font-semibold text-purple-700 mb-2">
+                  Billing Cycle *
+                </label>
+                <select
+                  id="billing_cycle"
+                  name="billing_cycle"
+                  value={formData.billing_cycle}
+                  onChange={handleInputChange}
+                  className="w-full px-3 py-2 border border-purple-200 rounded-md focus:outline-none focus:ring-2 focus:ring-purple-500"
+                >
+                  {billingCycleOptions.map((option) => (
+                    <option key={option.value} value={option.value}>
+                      {option.label}
+                    </option>
+                  ))}
+                </select>
+              </div>
+
+              {/* Next Billing Date (Calculated) */}
+              <div className="bg-purple-50 p-4 rounded-lg border border-purple-200">
+                <label htmlFor="next_billing_preview" className="block text-sm font-semibold text-purple-700 mb-2">
+                  Next Billing Date (Calculated)
                 </label>
                 <input
-                  type="date"
-                  id="next_billing_date"
-                  name="next_billing_date"
-                  value={formData.next_billing_date}
-                  onChange={handleInputChange}
-                  className={`w-full px-3 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-purple-500 ${
-                    errors.next_billing_date ? 'border-red-500' : 'border-purple-200'
-                  }`}
-                  required
+                  type="text"
+                  id="next_billing_preview"
+                  value={calculateNextBillingDate(formData.billing_cycle)}
+                  readOnly
+                  className="w-full px-3 py-2 border border-purple-200 rounded-md bg-gray-50 text-gray-600 cursor-not-allowed"
                 />
-                {errors.next_billing_date && (
-                  <p className="mt-1 text-sm text-red-600">{errors.next_billing_date}</p>
-                )}
+                <p className="text-xs text-purple-600 mt-1">
+                  Automatically calculated based on billing cycle
+                </p>
               </div>
             </div>
 
             {/* Action buttons */}
-            <div className="flex justify-center gap-4 pt-4 border-t border-orange-200 mt-6">
+            <div className="flex justify-center gap-4 pt-4 border-t border-purple-200 mt-6">
               {/* Cancel button */}
               <button
                 type="button"

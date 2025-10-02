@@ -81,7 +81,7 @@ const Dashboard = () => {
   const { totalEUR, totalUSD } = calculateTotals();
   const monthlyTotalEUR = totalEUR || 0;
   const monthlyTotalUSD = totalUSD || 0;
-  const totalServices = subscriptions.length;
+  const totalServices = availableServices.length;
 
   const getServiceInitials = (serviceName) => {
     return serviceName.substring(0, 2).toUpperCase();

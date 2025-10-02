@@ -34,4 +34,8 @@ export const subscriptionAPI = {
   getStats: jest.fn()
 };
 
+// Mock Reports API functions
+export const getReports = jest.fn();
+export const exportReports = jest.fn();
+
 export default api;
