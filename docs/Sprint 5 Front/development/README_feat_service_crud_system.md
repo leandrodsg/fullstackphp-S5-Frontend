@@ -2,43 +2,43 @@
 
 ## Overview
 
-Implements the complete service management system for TechSubs, providing full CRUD (Create, Read, Update, Delete) operations for technology services. The branch extends the existing authentication and dashboard system with service management capabilities following REST API principles and modern React patterns.
+Implements the complete service management system for TechSubs, providing full CRUD (Create, Read, Update, Delete) operations for technology services. The branch extends the existing authentication and dashboard system with comprehensive service management capabilities.
 
 ## Technical Implementation
 
 ### Service Management Pages
 
 CreateService Component:
-- Form-based service creation with React Hook Form integration
-- Category selection from predefined enum-based options (Streaming, Cloud Storage, Development Tools, etc.)
-- Multi-layer validation: client-side with yup schema validation, server-side API validation
-- URL format validation using RFC 3986 compliant regex patterns
-- Debounced input validation to prevent excessive API calls during typing
-- Error boundary implementation for graceful error handling
-- Success redirection with React Router v6 programmatic navigation using useNavigate hook
+- Form-based service creation with validation
+- Category selection from predefined options (Streaming, Cloud Storage, Development Tools, etc.)
+- Client-side and server-side validation integration
+- URL format validation and error handling
+- Success redirection after service creation
 
 EditService Component:
-- Dynamic service loading with useParams hook for URL parameter extraction
-- Pre-populated form fields using useEffect with dependency array optimization
-- Form state synchronization with existing service data through controlled components
-- Optimistic updates with rollback mechanism on API failure
-- Navigation state preservation using location.state for seamless user experience
+- Dynamic service loading and form pre-population
+- Form state synchronization with existing service data
+- Update functionality with error handling
+- Navigation state preservation
 
 MyServices Component:
-- Paginated service listing with virtual scrolling for performance optimization
-- Search functionality with debounced input and query parameter persistence
-- Service cards implementing React.memo for render optimization
-- Action buttons with event delegation pattern for memory efficiency
-- Responsive grid layout using CSS Grid with auto-fit and minmax functions
-- Empty state handling with skeleton loading components
+- Service listing with search functionality
+- Responsive grid layout for service cards
+- Action buttons for edit and delete operations
+- Empty state handling
 
 ServiceDetails Component:
-- Action buttons implementing command pattern for operation abstraction
-- Modal confirmation dialogs using React Portal for proper DOM hierarchy
-- Navigation breadcrumbs with dynamic route generation
-- SEO optimization with React Helmet for meta tag management
+- Individual service information display
+- Action buttons for edit and delete operations
+- Navigation integration
 
 ### Form Validation System
+
+Form Handling:
+- Traditional React state management with useState
+- Controlled components with onChange handlers
+- Manual validation with error state management
+- Direct form submission to API endpoints
 
 Field Validation Rules:
 - Name: Required field with trim() preprocessing, 2-100 character range validation using custom regex
@@ -55,34 +55,33 @@ Error Handling Strategy:
 
 ### API Integration Layer
 
-Endpoint Integration:
-- GET /services - Paginated service retrieval with query parameter serialization
-- GET /services/{id} - Individual service fetching with caching strategy implementation
-- POST /services - Service creation with optimistic updates and rollback mechanism
-- PUT /services/{id} - Service updates using PATCH semantics for partial updates
-- DELETE /services/{id} - Soft delete implementation with confirmation workflow
+Centralized API Structure:
+- serviceAPI object in api.js with standardized methods
+- serviceAPI.getAll() - Service listing with pagination support
+- serviceAPI.getById(id) - Individual service retrieval
+- serviceAPI.create(data) - Service creation
+- serviceAPI.update(id, data) - Service updates
+- serviceAPI.delete(id) - Service deletion
 
 Request/Response Handling:
-- Automatic JWT token injection using axios interceptors with token refresh logic
-- Loading state management using custom useAsync hook with abort controller support
-- Error response parsing with HTTP status code mapping to user-friendly messages
-- Success confirmation with toast notifications and navigation state management
-- Request retry mechanism with exponential backoff for transient failures
+- Axios for HTTP requests with basic configuration
+- Direct API calls from components
+- Manual error handling with try-catch blocks
+- Loading states managed with local component state
 
-Data Transformation:
-- Form data serialization using custom serializer with nested object support
-- Response data normalization using adapter pattern for consistent data structure
-- Date formatting with timezone handling using date-fns library
-- URL validation and sanitization with XSS prevention measures
-- Data caching implementation using React Query for optimized API calls
+API Consistency:
+- Unified API call structure matching subscriptionAPI pattern
+- Centralized endpoint management in single api.js file
+- Consistent error handling across all service pages
+- Improved maintainability and code organization
 
 ### State Management Architecture
 
 Component-level State Management:
-- Form data management using useReducer for complex form state with action-based updates
-- Loading states implemented with custom useAsync hook providing loading, error, and data states
-- Error state handling using error boundary pattern with fallback UI components
-- Success state management with navigation using React Router v6 useNavigate hook
+- Traditional React state management with useState and useEffect
+- Context API for global state sharing (AuthContext)
+- Local component state for form handling and UI interactions
+- Manual state synchronization between components
 - State persistence using sessionStorage for form draft functionality
 
 Data Flow Architecture:
@@ -111,71 +110,56 @@ Route Configuration:
 ### Testing Implementation
 
 Unit Testing:
-- Component rendering validation using React Testing Library with custom render utilities
-- Form submission behavior testing with user event simulation
-- API integration mocking using MSW (Mock Service Worker) for realistic API responses
-- Error handling scenario coverage with error boundary testing
-- Custom hook testing using renderHook utility for isolated hook logic testing
+- React Testing Library for component testing
+- Manual mock data for consistent test scenarios
+- Form interaction testing with fireEvent
+- Component rendering and state verification
 
 Integration Testing:
-- Complete user workflow testing with end-to-end scenario coverage
-- Navigation flow validation using React Router testing utilities
-- Authentication integration verification with context provider testing
-- API endpoint interaction testing with network request interception
-- Cross-component communication testing with provider-consumer patterns
+- Basic API endpoint testing
+- Component interaction testing
+- Navigation flow testing
+- Error handling verification
 
 Mock Data Strategy:
-- Realistic service data generation using faker.js for consistent test data
-- Edge case scenario testing with boundary value analysis
-- Performance testing with large datasets using virtual scrolling validation
-- Offline functionality validation with service worker integration testing
-- Error state testing with network failure simulation
+- Static mock data in utils/mockData.js
+- Manual API response mocking
+- Test data consistency across test suites
+- Predefined test scenarios for different states
 
 ### Performance Optimizations
 
-Component Optimization:
-- React.memo implementation with custom comparison functions for expensive components
-- useCallback hooks with dependency array optimization for event handler memoization
-- useMemo hooks for computed values with complex calculations and filtering operations
-- Lazy loading implementation using React.lazy with dynamic imports for route-based code splitting
-- Virtual scrolling implementation for large service lists using react-window library
+Component Performance:
+- Basic React component optimization
+- Conditional rendering for better performance
+- Simple state management to avoid unnecessary re-renders
+- Standard React patterns for component efficiency
 
-API Optimization:
-- Request debouncing using custom useDebounce hook with configurable delay for search functionality
-- Caching strategies using React Query with stale-while-revalidate pattern for data freshness
-- Pagination implementation with cursor-based pagination for consistent performance
-- Optimistic updates with rollback mechanism for immediate UI feedback
-- Request deduplication to prevent duplicate API calls for identical requests
+API Performance:
+- Direct API calls with Axios
+- Basic error handling and loading states
+- Simple data fetching patterns
+- Standard HTTP request optimization
 
-Bundle Optimization:
-- Code splitting at route level using dynamic imports with webpack magic comments
-- Tree shaking optimization for unused code elimination in production builds
-- Asset optimization with image lazy loading and WebP format support
-- CSS optimization using PurgeCSS for unused style removal
-- Service worker implementation for offline functionality and caching strategies
+Bundle Performance:
+- Create React App default optimization
+- Standard build process with code splitting
+- Basic asset optimization
+- Standard production build configuration
 
 ### Security Considerations
 
 Input Validation:
-- Client-side validation with XSS prevention using DOMPurify for HTML sanitization
-- Server-side validation integration with comprehensive error handling
-- CSRF protection through JWT token implementation with secure httpOnly cookies
-- SQL injection prevention through parameterized queries and ORM usage
-- Input sanitization using validator.js library for comprehensive data validation
+- Basic client-side validation for form inputs
+- Required field validation
+- Data type validation for numeric fields
+- Length validation for text inputs
 
-Authentication Integration:
-- Protected route implementation with role-based access control (RBAC) preparation
-- Token expiration handling with automatic refresh using sliding session pattern
-- Secure token storage using httpOnly cookies instead of localStorage for production
-- Session management with concurrent session handling and device tracking
-- Password security with bcrypt hashing and salt generation on server side
-
-Data Protection:
-- Sensitive data masking in development and logging environments
-- HTTPS enforcement with HSTS headers for secure communication
-- Content Security Policy (CSP) implementation for XSS attack prevention
-- Rate limiting implementation on API endpoints to prevent abuse
-- Data encryption for sensitive information using AES-256 encryption
+API Security:
+- JWT token authentication
+- Basic authorization checks
+- Standard HTTPS communication
+- Simple error handling without sensitive data exposure
 
 ## Others Technical Considerations
 

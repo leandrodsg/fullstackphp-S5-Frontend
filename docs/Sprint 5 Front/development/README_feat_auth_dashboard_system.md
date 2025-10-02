@@ -28,7 +28,7 @@ Token Management:
 - Graceful fallback to login page on token expiration
 
 Form Integration:
-- React Hook Form for validation and error handling
+- Traditional React state management with useState for form handling
 - Email format validation and required field checks
 - Password confirmation matching for registration
 - Remember me functionality for persistent sessions
@@ -45,7 +45,7 @@ ProtectedRoute Component:
 
 Route Structure:
 - Public routes: Landing page, Login, Register
-- Protected routes: Dashboard, Subscriptions (future), Profile (future)
+- Protected routes: Dashboard, My Services, My Subscriptions, Create Service, Create Subscription
 - Automatic navigation based on authentication state
 
 ### Dashboard Implementation
@@ -94,11 +94,11 @@ Component Styling:**
 
 ### Form Handling Strategy
 
-React Hook Form Integration:
-- Declarative validation rules
-- Real-time error feedback
-- Optimized re-rendering performance
-- Easy integration with API error responses
+Traditional React State Management:
+- useState hooks for form state management
+- Controlled components with onChange handlers
+- Manual validation with error state management
+- Direct API integration with loading states
 
 Validation Rules:
 - Email format validation with regex patterns
@@ -109,16 +109,16 @@ Validation Rules:
 ### Testing Strategy
 
 Component Testing:
-- Rendering verification for all components
-- User interaction testing (clicks, form submissions)
-- Authentication flow testing with mocked API calls
-- Protected route access verification
+- React Testing Library for component rendering and interaction
+- Mock API responses with manual mocking
+- User event simulation for form interactions
+- Authentication flow testing with mocked contexts
 
 API Testing:
-- Mock API responses for consistent testing
-- Error scenario testing (network failures, invalid tokens)
-- Token persistence testing across browser sessions
-- Form validation testing with various input combinations
+- Basic API endpoint testing
+- Authentication token handling verification
+- Error response handling validation
+- Mock data integration for consistent testing
 
 ## Security Considerations
 
