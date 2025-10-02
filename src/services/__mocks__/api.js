@@ -14,4 +14,24 @@ const api = {
   }
 };
 
+// Mock Service API functions
+export const serviceAPI = {
+  getAll: jest.fn(),
+  getById: jest.fn(),
+  create: jest.fn(),
+  update: jest.fn(),
+  delete: jest.fn(),
+  getStats: jest.fn()
+};
+
+// Mock Subscription API functions
+export const subscriptionAPI = {
+  getAll: jest.fn(),
+  getById: jest.fn(),
+  create: jest.fn(),
+  update: jest.fn(),
+  delete: jest.fn(),
+  getStats: jest.fn()
+};
+
 export default api;
