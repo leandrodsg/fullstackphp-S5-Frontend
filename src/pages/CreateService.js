@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router';
-import api from '../services/api';
+import { serviceAPI } from '../services/api';
 
 const CreateService = () => {
   const navigate = useNavigate();
@@ -81,7 +81,7 @@ const CreateService = () => {
     setLoading(true);
     
     try {
-      await api.post('/services', formData);
+      await serviceAPI.create(formData);
       navigate('/services');
     } catch (error) {
       console.error('Error creating service:', error);

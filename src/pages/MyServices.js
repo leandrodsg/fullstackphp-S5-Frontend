@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router';
-import api from '../services/api';
+import { serviceAPI } from '../services/api';
 import { getInitials } from '../utils/helpers';
 
 const MyServices = () => {
@@ -14,7 +14,7 @@ const MyServices = () => {
       try {
         setLoading(true);
         setError(null);
-        const response = await api.get('/services');
+        const response = await serviceAPI.getAll();
         
         if (response.data?.data) {
           setServices(response.data.data);

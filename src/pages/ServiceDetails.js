@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router';
-import api from '../services/api';
+import { serviceAPI } from '../services/api';
+import { getInitials } from '../utils/helpers';
 
 const ServiceDetails = () => {
   const { id } = useParams();
@@ -14,7 +15,7 @@ const ServiceDetails = () => {
       try {
         setLoading(true);
         setError(null);
-        const response = await api.get(`/services/${id}`);
+        const response = await serviceAPI.getById(id);
         setService(response.data.data); // API returns { data: service }
       } catch (err) {
         console.error('Error fetching service:', err);
