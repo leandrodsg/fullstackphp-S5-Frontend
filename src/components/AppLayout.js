@@ -129,14 +129,20 @@ const DesktopSidebarContent = ({ navigation, isCurrentRoute }) => {
           <h3 className="text-xs font-semibold text-purple-600 uppercase tracking-wider">Analytics</h3>
         </div>
 
-        {/* Reports (Future feature) */}
+        {/* Reports */}
         <Link
           to="/reports"
-          className="group flex items-center px-4 py-3 mb-2 text-sm font-medium rounded-xl transition-all duration-200 text-purple-600 hover:bg-purple-100 hover:text-purple-700 opacity-60"
+          className={`group flex items-center px-4 py-3 mb-2 text-sm font-medium rounded-xl transition-all duration-200 ${
+            isCurrentRoute('/reports')
+              ? 'bg-gradient-to-r from-purple-200 to-rose-100 text-purple-800 shadow-sm'
+              : 'text-purple-700 hover:bg-purple-100 hover:text-purple-800'
+          }`}
         >
-          <ReportsIcon className="w-5 h-5 mr-3 text-purple-500" />
+          <ReportsIcon className={`w-5 h-5 mr-3 ${isCurrentRoute('/reports') ? 'text-purple-600' : 'text-purple-500 group-hover:text-purple-600'}`} />
           Reports
-          <span className="ml-auto text-xs bg-rose-100 text-rose-600 px-2 py-1 rounded-full">Soon</span>
+          {isCurrentRoute('/reports') && (
+            <div className="ml-auto w-2 h-2 bg-rose-400 rounded-full"></div>
+          )}
         </Link>
       </nav>
 
