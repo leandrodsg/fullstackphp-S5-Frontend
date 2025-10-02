@@ -27,13 +27,13 @@ Frontend requirements:
 
 Technologies used in the React frontend:
 
-- React 18 with functional components and hooks
+- React 19.1.1 with functional components and hooks
 - Create React App for project setup
-- Tailwind CSS via CDN for styling
-- Axios for API communication
-- React Router v6 for navigation
-- React Hook Form for form handling
-- React Testing Library with Jest for testing
+- Tailwind CSS 4.1.13 for styling
+- Axios 1.12.2 for API communication
+- React Router 7.9.3 for navigation
+- React Hook Form 7.63.0 for form handling
+- React Testing Library 16.3.0 with Jest for testing
 - Environment variables for configuration
 
 ## Implementation
@@ -87,7 +87,7 @@ Dashboard features implemented:
 - Integration with /subscriptions and /profile API endpoints
 - Mock data fallback for development without backend
 
-The implementation uses React Context API to manage authentication state globally, avoiding prop drilling between components. Tailwind CSS maintains visual consistency with the previously developed landing page. React Router v6 handles navigation between public and protected pages. Tests cover critical scenarios like login, dashboard, and route protection. The API layer uses axios with interceptors to automatically inject JWT tokens in requests.
+The implementation uses React Context API to manage authentication state globally, avoiding prop drilling between components. Tailwind CSS maintains visual consistency with the previously developed landing page. React Router 7.9.3 handles navigation between public and protected pages. Tests cover critical scenarios like login, dashboard, and route protection using React Testing Library with manual API mocking. The API layer uses axios with interceptors to automatically inject JWT tokens in requests.
 
 More details: [README_feat_auth_dashboard_system.md](development/README_feat_auth_dashboard_system.md)
 
@@ -109,6 +109,52 @@ Technical implementations:
 - Performance optimizations with React.memo, useCallback, and useMemo
 - Security considerations with input validation and authentication integration
 
-The implementation provides a complete service lifecycle management system that integrates seamlessly with the existing authentication and dashboard components. All forms include validation, error handling, and user feedback mechanisms. The API integration follows REST principles with proper error handling and loading states.
-
 More details: [README_feat_service_crud_system.md](development/README_feat_service_crud_system.md)
+
+## Branch feat/subscription-crud-system
+
+Implements the complete subscription management system with full CRUD operations for technology subscriptions. The branch extends the existing service management infrastructure with subscription lifecycle management capabilities following the same architectural patterns and design principles.
+
+Subscription management features implemented:
+- CreateSubscription: Form-based subscription creation with service selection and validation
+- EditSubscription: Dynamic subscription editing with pre-populated data and service integration
+- MySubscriptions: Paginated subscription listing with status management and filtering
+- SubscriptionDetails: Subscription information display with lifecycle actions
+
+Technical implementations:
+- Centralized subscriptionAPI with full CRUD endpoint support and consistent error handling
+- Form validation system with real-time feedback and server-side integration
+- Service integration for subscription creation with dynamic service selection
+- Status management system with visual indicators and lifecycle controls
+- Date handling for billing cycles and subscription periods
+- Currency and pricing display with internationalization support
+
+More details: [README_feat_subscriptions_crud.md](development/README_feat_subscriptions_crud.md)
+
+## Branch feat/subscriptions-crud
+
+Implements the complete subscription management system with full CRUD operations for technology subscriptions.
+
+Subscription management features implemented:
+- MySubscriptions: Complete subscription listing page with service avatars, status badges, and summary footer
+- CreateSubscription: Modal-based subscription creation with service selection and billing configuration
+- EditSubscription: Dynamic subscription editing with pre-populated data and service integration
+- SubscriptionDetails: Subscription information display with lifecycle management actions
+
+CRUD operations implemented:
+- GET /api/v1/subscriptions for subscription listing with filtering and pagination
+- POST /api/v1/subscriptions for subscription creation with service association
+- PUT /api/v1/subscriptions/{id} for subscription updates and modifications
+- DELETE /api/v1/subscriptions/{id} for subscription removal with confirmation
+- PATCH /api/v1/subscriptions/{id}/cancel for subscription cancellation
+- PATCH /api/v1/subscriptions/{id}/reactivate for subscription reactivation
+
+Technical implementations:
+- Service integration with dynamic service selection and avatar display
+- Status management system with visual indicators (Active, Expiring, Cancelled)
+- Billing cycle management with next payment date calculations
+- Summary calculations for total subscriptions, monthly costs, and active services
+- Comprehensive test suite covering all subscription operations and edge cases
+- Enhanced API integration with consistent error handling and loading states
+
+More details: [README_feat_subscriptions_crud.md](development/README_feat_subscriptions_crud.md)
