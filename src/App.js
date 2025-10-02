@@ -9,6 +9,10 @@ import MyServices from './pages/MyServices';
 import CreateService from './pages/CreateService';
 import ServiceDetails from './pages/ServiceDetails';
 import EditService from './pages/EditService';
+import MySubscriptions from './pages/MySubscriptions';
+import CreateSubscription from './pages/CreateSubscription';
+import SubscriptionDetails from './pages/SubscriptionDetails';
+import EditSubscription from './pages/EditSubscription';
 import AppLayout from './components/AppLayout';
 import ProtectedRoute from './components/ProtectedRoute';
 
@@ -67,9 +71,31 @@ function App() {
           <Route path="/subscriptions" element={
             <ProtectedRoute>
               <AppLayout>
-                <div className="p-8">
-                  <h1 className="text-2xl font-bold text-gray-900">Subscriptions (Coming Soon)</h1>
-                </div>
+                <MySubscriptions />
+              </AppLayout>
+            </ProtectedRoute>
+          } />
+          
+          <Route path="/subscriptions/create" element={
+            <ProtectedRoute>
+              <AppLayout>
+                <CreateSubscription />
+              </AppLayout>
+            </ProtectedRoute>
+          } />
+          
+          <Route path="/subscriptions/:id" element={
+            <ProtectedRoute>
+              <AppLayout>
+                <SubscriptionDetails />
+              </AppLayout>
+            </ProtectedRoute>
+          } />
+          
+          <Route path="/subscriptions/:id/edit" element={
+            <ProtectedRoute>
+              <AppLayout>
+                <EditSubscription />
               </AppLayout>
             </ProtectedRoute>
           } />

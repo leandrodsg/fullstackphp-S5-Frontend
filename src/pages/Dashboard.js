@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useAuth } from '../contexts/AuthContext';
 import { Link, useNavigate } from 'react-router';
-import api from '../services/api';
+import { subscriptionAPI, serviceAPI } from '../services/api';
 
 const Dashboard = () => {
   const { user } = useAuth();
@@ -20,23 +20,33 @@ const Dashboard = () => {
         setLoading(true);
         setError(null);
 
-        const [subscriptionsResponse, profileResponse, servicesResponse] = await Promise.all([
-          api.get('/subscriptions'),
-          api.get('/profile'),
-          api.get('/services')
+        const [subscriptionsResponse, servicesResponse] = await Promise.all([
+          subscriptionAPI.getAll(),
+          serviceAPI.getAll()
         ]);
 
-        if (subscriptionsResponse.data?.data) {
-          setSubscriptions(subscriptionsResponse.data.data);
-        }
+        let subscriptionsData = [];
+        let servicesData = [];
 
-        if (profileResponse.data?.data?.user) {
-          setProfile(profileResponse.data.data.user);
+        if (subscriptionsResponse.data?.data) {
+          subscriptionsData = subscriptionsResponse.data.data;
         }
 
         if (servicesResponse.data?.data) {
-          setAvailableServices(servicesResponse.data.data);
+          servicesData = servicesResponse.data.data;
+          setAvailableServices(servicesData);
         }
+
+        // Map service data to subscriptions
+        const subscriptionsWithServices = subscriptionsData.map(subscription => {
+          const service = servicesData.find(s => s.id === subscription.service_id);
+          return {
+            ...subscription,
+            service: service || null
+          };
+        });
+
+        setSubscriptions(subscriptionsWithServices);
       } catch (error) {
         console.error('Error loading data:', error);
         setError('Failed to load dashboard data');
@@ -49,8 +59,28 @@ const Dashboard = () => {
   }, [user]);
 
   const activeSubscriptions = subscriptions.filter(sub => sub.status === 'active');
-  const monthlyTotalEUR = activeSubscriptions.reduce((total, sub) => total + (sub.price || 0), 0);
-  const monthlyTotalUSD = monthlyTotalEUR * 1.09;
+  
+  // Calculate totals separated by currency (no conversion)
+  const calculateTotals = () => {
+    let totalEUR = 0;
+    let totalUSD = 0;
+    
+    activeSubscriptions.forEach(sub => {
+      const price = parseFloat(sub.price) || 0;
+      if (sub.currency === 'EUR') {
+        totalEUR += price;
+      } else if (sub.currency === 'USD') {
+        totalUSD += price;
+      }
+      // Ignore subscriptions with other currencies or no currency
+    });
+    
+    return { totalEUR, totalUSD };
+  };
+  
+  const { totalEUR, totalUSD } = calculateTotals();
+  const monthlyTotalEUR = totalEUR || 0;
+  const monthlyTotalUSD = totalUSD || 0;
   const totalServices = subscriptions.length;
 
   const getServiceInitials = (serviceName) => {
@@ -120,6 +150,8 @@ const Dashboard = () => {
                 </div>
               </div>
             </div>
+
+
 
         {/* Quick Stats */}
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 mb-6">
@@ -213,7 +245,7 @@ const Dashboard = () => {
                             {subscription.plan || 'N/A'}
                           </td>
                           <td className="px-3 py-3 whitespace-nowrap text-center text-sm font-medium text-gray-900">
-                            ${(subscription.price || 0).toFixed(2)}
+                            ${(parseFloat(subscription.price) || 0).toFixed(2)}
                           </td>
                           <td className="px-3 py-3 whitespace-nowrap text-center">
                             {getStatusBadge(subscription.status || 'active')}

@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
-import { useParams, useNavigate } from 'react-router';
-import api from '../services/api';
+import { useNavigate, useParams } from 'react-router';
+import { serviceAPI } from '../services/api';
 
 const EditService = () => {
   const { id } = useParams();
@@ -30,7 +30,7 @@ const EditService = () => {
       try {
         setLoading(true);
         setError(null);
-        const response = await api.get(`/services/${id}`);
+        const response = await serviceAPI.getById(id);
         const foundService = response.data.data; // API returns { data: service }
         
         if (foundService) {
@@ -105,7 +105,7 @@ const EditService = () => {
     setIsSubmitting(true);
 
     try {
-      const response = await api.put(`/services/${id}`, {
+      const response = await serviceAPI.update(id, {
         name: formData.name,
         category: formData.category,
         website_url: formData.website_url,
