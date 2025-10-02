@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router';
 import { subscriptionAPI, serviceAPI } from '../services/api';
+import { calculateBillingCycleFromDates, getBillingCycleDisplayText } from '../utils/billingCycleUtils';
 
 const MySubscriptions = () => {
   const navigate = useNavigate();
@@ -31,12 +32,20 @@ const MySubscriptions = () => {
           servicesData = servicesResponse.data.data;
         }
 
-        // Map service data to subscriptions
+        // Map service data to subscriptions and calculate billing cycle if missing
         const subscriptionsWithServices = subscriptionsData.map(subscription => {
           const service = servicesData.find(s => s.id === subscription.service_id);
+          
+          // Calculate billing cycle if not provided by backend
+          let billingCycle = subscription.billing_cycle;
+          if (!billingCycle && subscription.created_at && subscription.next_billing_date) {
+            billingCycle = calculateBillingCycleFromDates(subscription.created_at, subscription.next_billing_date);
+          }
+          
           return {
             ...subscription,
-            service: service || null
+            service: service || null,
+            billing_cycle: billingCycle || 'monthly' // Default fallback
           };
         });
 
@@ -232,7 +241,7 @@ const MySubscriptions = () => {
                           {dateInfo.formatted}
                         </div>
                         <div className="text-xs text-gray-500">
-                          {subscription.billing_cycle}
+                          {getBillingCycleDisplayText(subscription.billing_cycle)}
                         </div>
                       </td>
 

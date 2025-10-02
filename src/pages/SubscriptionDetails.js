@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { useNavigate, useParams } from 'react-router';
 import { subscriptionAPI, serviceAPI } from '../services/api';
 import { getInitials } from '../utils/helpers';
+import { calculateBillingCycleFromDates, getBillingCycleDisplayText } from '../utils/billingCycleUtils';
 
 const SubscriptionDetails = () => {
   const navigate = useNavigate();
@@ -33,9 +34,16 @@ const SubscriptionDetails = () => {
           // Find the service for this subscription
           const service = servicesData.find(s => s.id === subscriptionData.service_id);
           
+          // Calculate billing cycle if not provided by backend
+          let billingCycle = subscriptionData.billing_cycle;
+          if (!billingCycle && subscriptionData.created_at && subscriptionData.next_billing_date) {
+            billingCycle = calculateBillingCycleFromDates(subscriptionData.created_at, subscriptionData.next_billing_date);
+          }
+          
           setSubscription({
             ...subscriptionData,
-            service: service || null
+            service: service || null,
+            billing_cycle: billingCycle || 'monthly' // Default fallback
           });
         } else {
           setError('Subscription not found');
@@ -249,12 +257,26 @@ const SubscriptionDetails = () => {
             </div>
           </div>
 
-          {/* Next billing date - full width */}
-          <div className="mb-6 p-4 bg-purple-50 rounded-lg border border-purple-200">
-            <h3 className="text-lg font-bold text-purple-800 mb-2">Next Billing Date</h3>
-            <p className="text-sm text-purple-900 leading-relaxed">
-              <strong>{nextBillingInfo.formatted}</strong> - {nextBillingInfo.relative}
-            </p>
+          {/* Next billing date and billing cycle */}
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
+            {/* Next Billing Date */}
+            <div className="bg-purple-50 p-4 rounded-lg border border-purple-200">
+              <h3 className="text-sm font-semibold text-purple-700 mb-2">Next Billing Date</h3>
+              <p className="text-sm text-purple-900 leading-relaxed">
+                <strong>{nextBillingInfo.formatted}</strong>
+              </p>
+              <p className="text-xs text-purple-600 mt-1">{nextBillingInfo.relative}</p>
+            </div>
+
+            {/* Billing Cycle */}
+            <div className="bg-purple-50 p-4 rounded-lg border border-purple-200">
+              <div className="flex items-center justify-between">
+                <span className="text-sm font-semibold text-purple-700">Billing Cycle</span>
+                <span className="text-sm font-bold text-purple-900">
+                  {getBillingCycleDisplayText(subscription.billing_cycle)}
+                </span>
+              </div>
+            </div>
           </div>
 
           {/* Timestamp information */}

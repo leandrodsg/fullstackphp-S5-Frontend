@@ -12,10 +12,24 @@ const CreateSubscription = () => {
     plan: '',
     price: '',
     currency: 'USD',
-    next_billing_date: '',
+    billing_cycle: 'monthly',
     status: 'active'
   });
   const [errors, setErrors] = useState({});
+
+  // Função para calcular next_billing_date baseado no billing_cycle
+  const calculateNextBillingDate = (billingCycle) => {
+    const now = new Date();
+    const nextBilling = new Date(now);
+    
+    if (billingCycle === 'annual' || billingCycle === 'yearly') {
+      nextBilling.setFullYear(now.getFullYear() + 1);
+    } else {
+      nextBilling.setMonth(now.getMonth() + 1);
+    }
+    
+    return nextBilling.toISOString().split('T')[0]; // Formato YYYY-MM-DD
+  };
 
   useEffect(() => {
     const fetchServices = async () => {
@@ -46,10 +60,6 @@ const CreateSubscription = () => {
 
     if (!formData.price || formData.price <= 0) {
       newErrors.price = 'Price must be greater than 0';
-    }
-
-    if (!formData.next_billing_date) {
-      newErrors.next_billing_date = 'Next billing date is required';
     }
 
     setErrors(newErrors);
@@ -85,7 +95,8 @@ const CreateSubscription = () => {
     try {
       const subscriptionData = {
         ...formData,
-        price: parseFloat(formData.price)
+        price: parseFloat(formData.price),
+        next_billing_date: calculateNextBillingDate(formData.billing_cycle)
       };
 
       await subscriptionAPI.create(subscriptionData);
@@ -106,7 +117,12 @@ const CreateSubscription = () => {
 
   const statusOptions = [
     { value: 'active', label: 'Active' },
-    { value: 'canceled', label: 'Canceled' }
+    { value: 'cancelled', label: 'Cancelled' }
+  ];
+
+  const billingCycleOptions = [
+    { value: 'monthly', label: 'Monthly' },
+    { value: 'annual', label: 'Annual' }
   ];
 
   const currencyOptions = [
@@ -219,22 +235,38 @@ const CreateSubscription = () => {
             </div>
 
             <div>
-              <label htmlFor="next_billing_date" className="block text-sm font-medium text-gray-700 mb-2">
-                Next Billing Date *
+              <label htmlFor="billing_cycle" className="block text-sm font-medium text-gray-700 mb-2">
+                Billing Cycle *
+              </label>
+              <select
+                id="billing_cycle"
+                name="billing_cycle"
+                value={formData.billing_cycle}
+                onChange={handleInputChange}
+                className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-purple-500"
+              >
+                {billingCycleOptions.map((option) => (
+                  <option key={option.value} value={option.value}>
+                    {option.label}
+                  </option>
+                ))}
+              </select>
+            </div>
+
+            <div>
+              <label htmlFor="next_billing_preview" className="block text-sm font-medium text-gray-700 mb-2">
+                Next Billing Date (Calculated)
               </label>
               <input
-                type="date"
-                id="next_billing_date"
-                name="next_billing_date"
-                value={formData.next_billing_date}
-                onChange={handleInputChange}
-                className={`w-full px-3 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-purple-500 ${
-                  errors.next_billing_date ? 'border-red-300' : 'border-gray-300'
-                }`}
+                type="text"
+                id="next_billing_preview"
+                value={calculateNextBillingDate(formData.billing_cycle)}
+                readOnly
+                className="w-full px-3 py-2 border border-gray-200 rounded-lg bg-gray-50 text-gray-600 cursor-not-allowed"
               />
-              {errors.next_billing_date && (
-                <p className="text-red-600 text-sm mt-1">{errors.next_billing_date}</p>
-              )}
+              <p className="text-xs text-gray-500 mt-1">
+                Automatically calculated based on billing cycle
+              </p>
             </div>
 
             <div>
