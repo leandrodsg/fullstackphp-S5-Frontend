@@ -16,12 +16,12 @@ This branch implements the reports system for TechSubs, providing subscription a
 #### Reports Component
 
 - Header section with "Reports" title and "Analyze your subscription data and export reports" subtitle
-- Filter section with service and status filtering capabilities
-- Data visualization table with columns: Service, Plan, Price, Status, Next Billing, Actions
-- Service avatars for popular services (Netflix, Spotify, Adobe, GitHub, Dropbox)
-- Status badges with color coding (Active, Expiring, Cancelled)
-- Summary footer displaying: Total Subscriptions, Monthly Cost, Active Services
-- Export functionality with CSV download capability
+- Filter section with date range (Next Billing From/To), service and status filtering capabilities
+- Data visualization table with columns: Service, Plan, Price, Status, Next Billing, Days Until, Billing Cycle
+- Service avatars using first letter of service name in purple circular badges
+- Status badges with color coding (Active: green, Cancelled: red)
+- Export functionality with CSV and Excel download capability
+- Pagination controls with results count display
 - Responsive design with mobile-first approach and table optimization
 
 ### Filtering System Implementation
@@ -29,47 +29,48 @@ This branch implements the reports system for TechSubs, providing subscription a
 #### Service Filtering
 
 - Dynamic service loading from subscriptions API
-- Multi-service selection with checkbox interface
-- Service avatar display in filter options
-- Real-time filter application with immediate results
+- Single service selection with dropdown interface
+- Service name display in filter options
+- Real-time filter application with "Apply Filters" button
 - Filter state persistence during session
 - Clear filters functionality with reset capability
 
 #### Status Filtering
 
-- Status-based data segmentation (Active, Expiring, Cancelled, All)
+- Status-based data segmentation (Active, Cancelled, All)
 - Visual status indicators with color coding
-- Combined filtering with service filters
-- Filter state management with URL parameter support
+- Combined filtering with service and date range filters
+- Filter state management with manual application
 - Real-time data updates based on filter changes
 
 ### Data Analytics Implementation
 
 #### Summary Calculations
 
-- Total subscription count calculation
-- Monthly cost aggregation with currency formatting
+- Filtered subscription count calculation
+- Results display with pagination information
 - Active services count with status validation
 - Filtered data summary updates
-- Currency conversion and formatting
-- Percentage calculations for status distribution
+- Date range filtering for next billing dates
+- Real-time filter application with manual trigger
 
 #### Data Visualization
 
 - Tabular data display with sorting capabilities
-- Service avatar integration for visual identification
-- Status badge system with consistent color coding
+- Service avatar integration using first letter badges
+- Status badge system with consistent color coding (green/red)
 - Price formatting with currency symbols
-- Date formatting for billing cycles
+- Date formatting for billing cycles and next billing dates
+- Days until next billing with relative time display
 - Responsive table design with mobile optimization
 
 ### Export Functionality
 
 #### CSV Export System
 
-- Complete subscription data export to CSV format
+- Complete subscription data export to CSV and Excel formats
 - Filtered data export maintaining current filter state
-- Custom column selection for export
+- Frontend filtering implementation for date range, service, and status
 - Date formatting for export compatibility
 - Currency formatting preservation in export
 - File naming with timestamp for organization
@@ -78,22 +79,22 @@ This branch implements the reports system for TechSubs, providing subscription a
 
 #### Reports API Implementation
 Centralized API integration for reports:
-- GET /api/v1/subscriptions for subscription data retrieval
-- Data aggregation and filtering on frontend
+- GET /api/v1/subscriptions for subscription data retrieval (via subscriptionAPI.getAll())
+- Frontend data aggregation and filtering implementation
 - Error handling with user-friendly messages
 - Loading state management with progress indicators
 - Response data transformation and normalization
-- Caching strategies for improved performance
+- Export functionality through exportReports API function
 
 ### Technical Architecture
 
 #### State Management
 
-- Filter state management using useState
+- Filter state management using useState (dateFrom, dateTo, service, status)
 - Loading states for data operations
 - Error state handling with recovery options
 - Data state management with subscription information
-- Summary state calculations with real-time updates
+- Unique services extraction for filter dropdown
 - Export state management for download operations
 
 ### Testing Implementation

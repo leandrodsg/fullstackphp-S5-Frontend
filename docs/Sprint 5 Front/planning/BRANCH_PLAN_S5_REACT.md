@@ -4,14 +4,14 @@ Este documento organiza o desenvolvimento do cliente frontend React para consumi
 
 ## Estado Atual do Sistema
 
-Backend API REST (Sprint 5) já desenvolvido:
+Backend API REST (Sprint 5):
 - Laravel com autenticação Passport (JWT tokens)
 - Sistema de roles diferenciados (Admin/User)
 - Endpoints completos: Auth, Services, Subscriptions, Reports
 - Exportação de dados em CSV
 - Documentação de API finalizada
 
-Frontend (a desenvolver):
+Frontend:
 - Wireframes para todas as páginas
 - UI Style Guide com paleta de cores e tipografia
 - Arquitetura React com autenticação JWT
@@ -30,7 +30,7 @@ Necessário para Sprint 5 Frontend:
 ### NIVEL 1 (Obrigatório)
 1. setup/react-project-base
 2. feat/auth-landing-pages
-3. feat/dashboard-layout
+3. feat/auth-dashboard-system
 4. feat/services-crud
 5. feat/subscriptions-crud
 6. feat/reports-export
@@ -52,7 +52,6 @@ Branch adicional:
 Configurar projeto React com dependências necessárias.
 
 Tarefas:
-- Escrever testes para configuração inicial
 - Criar projeto React com Create React App
 - Instalar dependências essenciais:
   - react-router-dom (roteamento)
@@ -64,28 +63,33 @@ Tarefas:
   - src/pages/
   - src/services/
   - src/utils/
+  - src/contexts/
+  - src/tests/
 - Configurar Tailwind CSS
 - Configurar variáveis de ambiente
 - Criar configuração do Axios
-- Validar testes passando
+- Implementar testes unitários para configuração
 
 ### 2. Branch: feat/auth-landing-pages
 Implementar landing page conforme wireframes e style guide.
 
 Tarefas:
-- Escrever testes para landing page
 - Criar Landing Page conforme wireframe:
   - Hero section "Organize all your tech subscriptions"
   - Cards de features (Centralized Management, Financial Control, Made for Devs)
   - Mockup da aplicação no lado direito
   - Gradiente roxo/laranja conforme style guide
-- Validar todos os testes passando
+- Implementar componentes reutilizáveis:
+  - HeroSection
+  - FeaturesSection
+  - Footer
+  - Navigation
+- Implementar testes para componentes da landing page
 
 ### 3. Branch: feat/auth-dashboard-system
 Implementar dashboard principal, layout da aplicação e sistema de autenticação.
 
 Tarefas:
-- Escrever testes para dashboard e autenticação
 - Implementar sistema de autenticação:
   - Criar AuthContext para gerenciar login/logout
   - Criar páginas de Login e Register com formulário centralizado
@@ -105,18 +109,17 @@ Tarefas:
 - Integrar com endpoints:
   - GET /api/v1/subscriptions (para cards e tabela)
   - GET /api/v1/profile (dados do usuário)
-- Validar todos os testes passando
+- Implementar testes para autenticação e dashboard
 
 ### 4. Branch: feat/services-crud
 Implementar gestão completa de serviços conforme wireframe.
 
 Tarefas:
-- Escrever testes para CRUD de serviços
 - Criar página "My Services" conforme wireframe:
   - Título "My Services" + "Manage available services for subscriptions"
   - Botão "+ New Service" no topo direito
   - Tabela com Name, Category, Website, Actions
-  - Avatars com ícones/iniciais dos serviços
+  - Avatars com iniciais dos serviços
   - Badges de categoria coloridos
   - Paginação no rodapé
 - Implementar CRUD completo:
@@ -126,18 +129,17 @@ Tarefas:
   - DELETE /api/v1/services/{id} (confirmação)
 - Adicionar ações por linha: visualizar, editar, deletar
 - Filtros por nome e categoria
-- Validar testes passando
+- Implementar testes para CRUD de serviços
 
 ### 5. Branch: feat/subscriptions-crud
 Implementar gestão completa de assinaturas conforme wireframe.
 
 Tarefas:
-- Escrever testes para CRUD de assinaturas
 - Criar página "My Subscriptions" conforme wireframe:
   - Título "My Subscriptions" + "Manage all your active subscriptions"
   - Botão "+ New Subscription" no topo direito
   - Tabela com Service, Plan, Price, Next Billing, Status, Actions
-  - Avatars dos serviços (Netflix, Spotify, Adobe, GitHub, Dropbox)
+  - Avatars dos serviços com iniciais
   - Status badges (Active, Expiring, Cancelled)
   - Summary no rodapé: Total Subscriptions, Monthly Cost, Active Services
 - Implementar CRUD completo:
@@ -148,64 +150,59 @@ Tarefas:
 - Implementar ações específicas:
   - PATCH /api/v1/subscriptions/{id}/cancel
   - PATCH /api/v1/subscriptions/{id}/reactivate
-- Validar testes passando
+- Implementar testes para CRUD de assinaturas
 
 ### 6. Branch: feat/reports-export
 Implementar relatórios com filtros e exportação conforme wireframe.
 
 Tarefas:
-- Escrever testes para relatórios
 - Criar página "Reports" conforme wireframe:
   - Título "Reports" + "Analyze your subscription data and export reports"
-  - Filtros no topo: Date Range, Service, Status, botão "Apply Filters"
+  - Filtros no topo: Date Range (manual), Service (dropdown), Status (dropdown)
   - Cards de resumo: Total Spending, Active Subscriptions, Average Monthly, Cancelled
   - Tabela "Subscription Data" com Service, Plan, Price, Status, Next Billing, Last Billing
-  - Botões de exportação: Export CSV, Export Excel, Export PDF
+  - Botões de exportação: Export CSV, Export Excel
   - Paginação no rodapé
-- Integrar com endpoints:
-  - GET /api/v1/reports/my-expenses (com filtros)
-  - GET /api/v1/reports/my-expenses/export (download CSV)
-- Implementar filtros funcionais por período, serviço e status
-- Validar testes passando
+- Implementar sistema de filtros:
+  - Filtros manuais de data (dateFrom/dateTo)
+  - Filtro por serviço único
+  - Filtro por status (Active, Cancelled)
+  - Aplicação de filtros no frontend
+- Integrar com endpoint:
+  - GET /api/v1/subscriptions (com filtros aplicados no frontend)
+- Implementar testes para relatórios e exportação
 
 ### 7. Branch: feat/profile-ui-polish
 Implementar perfil e finalizar interface conforme wireframes.
 
 Tarefas:
-- Escrever testes para perfil e acabamentos finais
 - Criar página "My Profile" conforme wireframe:
-  - Avatar grande + "John Doe" + email + "Member since"
-  - Formulário Account Information: First Name, Last Name, Email, Phone, Bio
+  - Avatar com iniciais do usuário
+  - Informações: Nome, email, "Member since"
+  - Formulário Account Information: Name, Email editáveis
   - Seção Change Password: Current, New, Confirm passwords
-  - Botões "Save Changes" e "Delete Account"
-  - Warning de deleção de conta
+  - Botões "Save Changes"
 - Integrar com endpoints:
   - GET /api/v1/profile
   - PUT /api/v1/profile (atualizar dados)
   - PUT /api/v1/change-password
+- Implementar sistema de exportação simples:
+  - Exportação CSV usando concatenação de strings
+  - Exportação Excel usando formato TSV
+  - Download via Blob API e URL.createObjectURL
 - Criar página Error 404
 - Aplicar style guide completo (cores roxo/laranja, tipografia)
 - Implementar responsividade
 - Ajustar navegação e loading states
-- Validar testes passando
+- Implementar testes para perfil e funcionalidades finais
 
 ## NIVEL 2 - Integração
 
-### 8. Branch: feat/api-integration
-Garantir integração completa com backend e otimizações básicas.
-
-Tarefas:
-- Testar integração completa com todos os endpoints
-- Implementar error handling padronizado
-- Adicionar interceptors para token automático
-- Otimizar requisições com loading states
-- Implementar logout automático em caso de erro 401
-- Validar funcionamento em diferentes cenários
-- Validar testes passando
+Garantir integração completa com backend e otimizações durante o desenvolvimento das branches do Nível 1.
 
 ## NIVEL 3 - Deploy
 
-### 9. Branch: deploy/docker-setup
+### 8. Branch: deploy/docker-setup
 Preparar aplicação para deploy com Docker.
 
 Tarefas:
@@ -215,47 +212,3 @@ Tarefas:
 - Testar build de produção
 - Documentar processo de deploy
 - Configurar nginx para servir arquivos estáticos
-
-## Considerações Técnicas
-
-### Abordagem TDD
-Cada branch deve seguir Test-Driven Development:
-1. Escrever testes para a funcionalidade antes da implementação
-2. Implementar código sem comentarios  
-3. Refatorar mantendo testes verdes
-4. Garantir cobertura adequada de testes
-
-### Stack Tecnológico
-- React 18+ com hooks e functional components
-- React Router v6 para roteamento SPA
-- Tailwind CSS para estilização conforme style guide
-- Axios para requisições HTTP
-- React Hook Form para formulários
-- Context API para gerenciamento de estado
-- React Testing Library para testes
-
-### Integração com API Backend
-- Autenticação Bearer token em todas as requisições autenticadas
-- Error handling padronizado para respostas da API
-- Loading states em operações assíncronas
-- Tratamento de erros 401/403 com redirecionamento
-
-### Requisitos Atendidos por Nível
-
-NIVEL 1:
-- Interface completa para todos os recursos da API
-- Sistema de autenticação JWT funcional
-- Dashboard com estatísticas
-- CRUD completo de Services e Subscriptions
-- Páginas conforme wireframes
-- Exportação de dados em CSV
-- Design responsivo
-
-NIVEL 2:
-- Integração robusta com backend
-- Error handling padronizado
-- Performance otimizada
-
-NIVEL 3:
-- Deploy com Docker funcional
-- Configurações de produção

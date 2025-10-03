@@ -16,13 +16,13 @@ Context Structure:
 - API integration with axios interceptors for token handling
 
 Functions:
-- `login(email, password, remember)` - Authenticates user and stores JWT token
-- `register(userData)` - Creates new user account with validation
-- `logout()` - Clears token and user data from localStorage and state
+- `login(email, password, remember)` - Authenticates user and stores JWT token with error handling
+- `register(name, email, password, passwordConfirmation)` - Creates new user account with validation
+- `logout()` - Clears token and user data from localStorage and state, calls logout API endpoint
 - `useAuth()` - Custom hook for accessing authentication context
 
 Token Management:
-- JWT tokens stored in localStorage with 'techsubs_token' key
+- JWT tokens stored in localStorage with 'auth_token' key
 - Automatic API header injection via axios interceptors
 - Token validation on app startup with /profile endpoint
 - Graceful fallback to login page on token expiration
