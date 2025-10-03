@@ -64,12 +64,13 @@ const MySubscriptions = () => {
 
   // Function to get status color (only 3 statuses: active, paused, canceled)
   const getStatusColor = (status) => {
-    switch (status?.toLowerCase()) {
+    switch (status.toLowerCase()) {
       case 'active':
         return 'bg-green-100 text-green-800';
       case 'paused':
         return 'bg-yellow-100 text-yellow-800';
       case 'canceled':
+      case 'cancelled':
         return 'bg-red-100 text-red-800';
       default:
         return 'bg-gray-100 text-gray-800';
@@ -172,7 +173,7 @@ const MySubscriptions = () => {
 
         {/* Subscriptions table or empty state */}
         {subscriptions.length > 0 ? (
-          <div className="bg-white rounded-lg shadow overflow-hidden border border-purple-100">
+          <div className="bg-white rounded-lg shadow overflow-hidden border border-purple-200">
             <table className="min-w-full divide-y divide-gray-200">
               <thead className="bg-purple-50">
                 <tr>

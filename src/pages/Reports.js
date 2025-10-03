@@ -36,13 +36,13 @@ const Reports = () => {
       setLoading(true);
       const response = await subscriptionAPI.getAll();
       
-      // O endpoint /subscriptions já retorna todos os dados necessários
+      // The /subscriptions endpoint already returns all necessary data
       const subscriptions = response.data.data || response.data || [];
       
-      // IMPLEMENTAR FILTRO NO FRONTEND
+      // IMPLEMENT FRONTEND FILTERING
       let filteredSubscriptions = subscriptions;
       
-      // Filtrar por data no frontend
+      // Filter by date on frontend
       if (currentFilters.dateFrom || currentFilters.dateTo) {
         filteredSubscriptions = filteredSubscriptions.filter(sub => {
           const nextBillingDate = new Date(sub.next_billing_date);
@@ -64,21 +64,21 @@ const Reports = () => {
         });
       }
       
-      // Filtrar por serviço no frontend
+      // Filter by service on frontend
       if (currentFilters.service && currentFilters.service !== 'all') {
         filteredSubscriptions = filteredSubscriptions.filter(sub => 
           sub.service_name === currentFilters.service
         );
       }
       
-      // Filtrar por status no frontend
+      // Filter by status on frontend
       if (currentFilters.status && currentFilters.status !== 'all') {
         filteredSubscriptions = filteredSubscriptions.filter(sub => 
           sub.status === currentFilters.status
         );
       }
       
-      // Criar estrutura de dados compatível com o componente
+      // Create data structure compatible with the component
       const reportsData = {
         user_name: 'User', // Placeholder
         total_subscriptions: filteredSubscriptions.length,
@@ -126,18 +126,31 @@ const Reports = () => {
   const handleExport = async (format) => {
     try {
       console.log('Exporting with filters:', filters);
-      const blob = await exportReports(format, filters);
-      const url = window.URL.createObjectURL(blob);
-      const a = document.createElement('a');
-      a.href = url;
-      a.download = `reports.${format}`;
-      document.body.appendChild(a);
-      a.click();
-      window.URL.revokeObjectURL(url);
-      document.body.removeChild(a);
+      console.log('Export format:', format);
+      
+      const content = await exportReports(format, filters);
+      
+      // Create a simple download link
+      const element = document.createElement('a');
+      const file = new Blob([content], { type: 'text/plain' });
+      element.href = URL.createObjectURL(file);
+      
+      // Set filename
+      const timestamp = new Date().toISOString().split('T')[0];
+      const filename = format === 'xlsx' 
+        ? `subscription-reports-${timestamp}.xls`
+        : `subscription-reports-${timestamp}.${format}`;
+      
+      element.download = filename;
+      document.body.appendChild(element);
+      element.click();
+      document.body.removeChild(element);
+      
+      // Show success message
+      alert(`Report exported successfully as ${format.toUpperCase()}!`);
     } catch (err) {
       console.error('Export error:', err);
-      alert('Error exporting report');
+      alert('Error exporting report. Please try again.');
     }
   };
 
@@ -173,12 +186,12 @@ const Reports = () => {
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
         {/* Header */}
         <div className="mb-8">
-          <h1 className="text-3xl font-bold text-gray-900">Reports</h1>
-          <p className="mt-2 text-gray-600">Analyze your subscription data and export reports</p>
+          <h1 className="text-3xl font-bold text-purple-800">Reports</h1>
+          <p className="mt-2 text-purple-600">Analyze your subscription data and export reports</p>
         </div>
 
         {/* Filters */}
-        <div className="bg-white rounded-lg shadow p-6 mb-8">
+        <div className="bg-white rounded-lg shadow p-6 mb-8 border border-orange-200">
           <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
             <div>
               <label htmlFor="dateFrom" className="block text-sm font-medium text-gray-700 mb-2">
@@ -255,7 +268,7 @@ const Reports = () => {
         </div>
 
         {/* Subscription Data Table */}
-        <div className="bg-white rounded-lg shadow">
+        <div className="bg-white rounded-lg shadow border border-orange-200">
           <div className="px-6 py-4 border-b border-gray-200 flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
             <h2 className="text-lg font-medium text-gray-900">Subscription Data</h2>
             <div className="flex flex-col sm:flex-row gap-2 w-full sm:w-auto">
@@ -327,7 +340,7 @@ const Reports = () => {
                     <td className="px-6 py-4 whitespace-nowrap text-sm">
                       {daysUntil !== null ? (
                         <span className={`${
-                          isExpired ? 'text-red-600 font-semibold' : 
+                          isExpired ? 'text-gray-600' : 
                           daysUntil <= 7 ? 'text-orange-600 font-semibold' : 
                           'text-gray-900'
                         }`}>

@@ -10,11 +10,12 @@ Implements the TechSubs landing page in React, replicating the original Blade te
 
 Sticky header with authentication buttons:
 
-- Uses `backdrop-blur-sm` for glassmorphism effect
-- Z-index 50 to stay above other content
-- Login and Sign-in buttons with SVG icons
-- Gradient button styling for Sign-in
-- Purple color scheme matching design
+- Uses `bg-white/70 backdrop-blur-sm` for glassmorphism effect with white transparency
+- Z-index 50 to stay above other content with `sticky top-0 z-50`
+- Logo integration with `/logo_NoBg.svg` image
+- Login button with purple styling and login icon
+- Sign-in button with gradient styling (`from-purple-700 to-indigo-700`) and user-plus icon
+- Hover effects with transform and shadow transitions
 
 ### HeroSection Component
 
@@ -45,9 +46,10 @@ Each card has white SVG icons and consistent spacing.
 ### LandingPage Component
 
 Main container component that imports and renders all other components:
-- Full viewport height layout
-- Purple to indigo gradient background
-- Flex column structure for proper spacing
+- Full viewport height layout with `min-h-screen`
+- Light purple to indigo gradient background (`from-purple-50 to-indigo-50`)
+- Flex column structure with Navigation, main content (HeroSection + FeaturesSection), and Footer
+- Uses semantic HTML with proper main element
 
 ## Key Implementation Details
 

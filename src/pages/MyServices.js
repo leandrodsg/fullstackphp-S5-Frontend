@@ -121,7 +121,7 @@ const MyServices = () => {
 
         {/* Services table */}
         {services.length > 0 ? (
-          <div className="bg-white rounded-lg shadow border border-orange-200">
+          <div className="bg-white rounded-lg shadow border border-orange-200 overflow-hidden">
             <table className="w-full divide-y divide-gray-200">
               <thead className="bg-orange-50 border-b border-orange-100">
                 <tr>

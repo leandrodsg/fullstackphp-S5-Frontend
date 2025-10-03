@@ -47,7 +47,7 @@ describe('Register Component', () => {
     expect(screen.getByRole('button', { name: 'Create Account' })).toBeInTheDocument();
   });
 
-  test('deve permitir digitar nos campos de entrada', () => {
+  test('should allow typing in input fields', () => {
     renderRegister();
 
     const nameInput = screen.getByLabelText('Full Name');
@@ -66,7 +66,7 @@ describe('Register Component', () => {
     expect(confirmPasswordInput.value).toBe('password123');
   });
 
-  test('deve chamar register com dados corretos ao submeter', async () => {
+  test('should call register with correct data on submit', async () => {
     mockRegister.mockResolvedValueOnce({ success: true });
 
     renderRegister();

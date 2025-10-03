@@ -34,6 +34,13 @@ export const subscriptionAPI = {
   getStats: jest.fn()
 };
 
+// Mock Profile API functions
+export const profileAPI = {
+  get: jest.fn(),
+  update: jest.fn(),
+  changePassword: jest.fn()
+};
+
 // Mock Reports API functions
 export const getReports = jest.fn();
 export const exportReports = jest.fn();

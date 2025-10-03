@@ -1,5 +1,5 @@
 import React from 'react';
-import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router';
+import { BrowserRouter as Router, Routes, Route } from 'react-router';
 import { AuthProvider } from './contexts/AuthContext';
 import LandingPage from './pages/LandingPage';
 import Login from './pages/Login';
@@ -14,6 +14,8 @@ import CreateSubscription from './pages/CreateSubscription';
 import SubscriptionDetails from './pages/SubscriptionDetails';
 import EditSubscription from './pages/EditSubscription';
 import Reports from './pages/Reports';
+import MyProfile from './pages/MyProfile';
+import NotFound from './pages/NotFound';
 import AppLayout from './components/AppLayout';
 import ProtectedRoute from './components/ProtectedRoute';
 
@@ -112,15 +114,13 @@ function App() {
           <Route path="/profile" element={
             <ProtectedRoute>
               <AppLayout>
-                <div className="p-8">
-                  <h1 className="text-2xl font-bold text-gray-900">Profile (Coming Soon)</h1>
-                </div>
+                <MyProfile />
               </AppLayout>
             </ProtectedRoute>
           } />
           
-          {/* Redirect unknown routes to landing */}
-          <Route path="*" element={<Navigate to="/" replace />} />
+          {/* Redirect unknown routes to 404 */}
+          <Route path="*" element={<NotFound />} />
         </Routes>
       </Router>
     </AuthProvider>

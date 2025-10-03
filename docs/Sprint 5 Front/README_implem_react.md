@@ -40,11 +40,11 @@ Technologies used in the React frontend:
 
 ## Branch setup/react-project-base
 
-The setup/react-project-base branch established the foundational configuration for the React application. The focus was on creating a solid base structure that would support all subsequent feature development while maintaining simplicity and educational clarity.
+The setup/react-project-base branch established the foundational configuration for the React application. The focus was on creating a robust base structure that would support all subsequent feature development.
 
-Essential dependencies were installed including react-router-dom for navigation, axios for API communication, and react-hook-form for form management.
+Dependencies were installed including react-router for navigation, axios for API communication, and react-hook-form for form management.
 
-Tailwind CSS was configured via CDN to avoid build configuration complexity while providing access to the utility-first styling approach specified in the project requirements.
+Tailwind CSS was configured via CDN in the public/index.html file, providing access to the utility-first styling approach specified in the project requirements with custom color palette configuration.
 
 API integration was prepared through axios configuration with automatic token handling and error management. Environment variables were configured to support different deployment environments. Testing was implemented to validate all configuration aspects.
 
@@ -58,14 +58,7 @@ Components implemented:
 - Navigation: Sticky header with glassmorphism effect and authentication buttons
 - HeroSection: Two-column layout with title and dashboard mockup
 - FeaturesSection: Three feature cards with gradient backgrounds
-- Footer: Simple footer with backdrop blur
-
-Key features:
-- Compact spacing system (py-4) to eliminate scroll
-- Embedded SVG icons for performance
-- Responsive design with mobile-first approach
-- Dashboard mockup showing realistic service pricing
-- Gradient styling matching the original design
+- Footer: Footer with backdrop blur
 
 More details: [README_feat_auth_landing_pages.md](development/README_feat_auth_landing_pages.md)
 
@@ -87,13 +80,13 @@ Dashboard features implemented:
 - Integration with /subscriptions and /profile API endpoints
 - Mock data fallback for development without backend
 
-The implementation uses React Context API to manage authentication state globally, avoiding prop drilling between components. Tailwind CSS maintains visual consistency with the previously developed landing page. React Router 7.9.3 handles navigation between public and protected pages. Tests cover critical scenarios like login, dashboard, and route protection using React Testing Library with manual API mocking. The API layer uses axios with interceptors to automatically inject JWT tokens in requests.
+The implementation uses React Context API to manage authentication state globally, avoiding prop drilling between components. Tailwind CSS maintains visual consistency with the previously developed landing page. React Router v7.9.3 handles navigation between public and protected pages. Tests cover critical scenarios like login, dashboard, and route protection using React Testing Library with API mocking. The API layer uses axios with interceptors to automatically inject JWT tokens in requests.
 
 More details: [README_feat_auth_dashboard_system.md](development/README_feat_auth_dashboard_system.md)
 
 ## Branch feat/services-crud
 
-Implements the complete service management system with full CRUD operations for technology services. The branch extends the existing authentication and dashboard infrastructure with service management capabilities following modern React patterns and REST API principles.
+Implements the service management system with full CRUD operations for technology services. The branch extends the existing authentication and dashboard infrastructure with service management capabilities following React patterns and REST API principles.
 
 Service management features implemented:
 - CreateService: Form-based service creation with validation
@@ -145,23 +138,63 @@ Implements the reports system for subscription analytics and data visualization.
 
 Reports system features implemented:
 - Reports: Complete reports page with subscription data visualization and filtering
-- Service filtering with dynamic service selection and multi-service support
-- Status filtering for subscription lifecycle analysis
-- Summary calculations displaying total subscriptions, monthly costs, and active services
-- Data export functionality for CSV format downloads
+- Filter section with date range filters (dateFrom, dateTo), single service selection dropdown, and status filtering
+- Data visualization table with columns for service, plan, price, status, next billing, days until, and billing cycle
+- Service avatars using first-letter badges with consistent color coding
+- Status badges with green/red color coding for visual status indication
+- Pagination controls for large datasets
+- Export functionality supporting both CSV and Excel formats with filtered data
 
 Technical implementations:
-- Centralized reportsAPI with subscription data aggregation and filtering support
-- Advanced filtering system with service and status-based data segmentation
-- Summary calculation engine for real-time metrics computation
-- Responsive data visualization with service avatars and status indicators
-- Comprehensive test suite covering reports functionality and edge cases
-- Enhanced error handling and loading states for improved user experience
+- Frontend filtering implementation using subscriptionAPI.getAll() for data retrieval
+- Date range filtering for next billing dates with manual filter application
+- Unique services extraction for filter dropdown population
+- Real-time summary calculations showing filtered subscription count and active services
+- Export system using exportReports function with blob URLs for file downloads
+- State management using useState for dateFrom, dateTo, service, and status filters
+- Comprehensive error handling and loading states for improved user experience
 
-Adaptations made during implementation:
-- Simplified test structure due to complex component interactions with multiple API calls
-- Focused testing approach on essential functionality rather than comprehensive integration tests
-- Mock data structure adjustments to match component expectations for data format
-- Router import corrections to maintain consistency with project dependencies
+Export functionality details:
+- CSV and Excel export maintaining current filter state
+- Date formatting for export compatibility with proper formatting
+- Currency formatting preservation in exported files
+- File naming with timestamp for organization
+- Simple download mechanism using blob URLs and automatic file download
 
 More details: [README_feat_reports_system.md](development/README_feat_reports_system.md)
+
+## Branch feat/profile-ui-polish
+
+Implements comprehensive UI/UX improvements and polishing across the entire application, focusing on visual consistency, user experience enhancements, and final functionality refinements. The branch addresses design inconsistencies, improves component spacing, and ensures all features work seamlessly together.
+
+Profile and UI improvements implemented:
+- MyProfile: Complete user profile management with account information display, editable name and email fields, and secure password change functionality
+- Dashboard: Enhanced layout with improved spacing, consistent summary cards, and recent subscriptions table
+- Export system: Advanced functionality with separate CSV and Excel export buttons using proper file formatting
+- Navigation: Improved responsive behavior and visual consistency across all screen sizes
+- Form validation: Enhanced user feedback with better error handling and success messages
+
+MyProfile component features:
+- User avatar with initials display and consistent styling
+- Account information section with name, email, and member-since date
+- Editable profile form with name and email fields
+- Password change section with current, new, and confirm password fields
+- Real-time form validation with error handling and success messages
+- Integration with profileAPI for profile updates and password changes
+
+UX enhancements implemented:
+- Consistent purple color scheme across all components and pages
+- Improved visual hierarchy with better typography and color contrast
+- Enhanced form interactions with real-time validation feedback
+- Responsive design improvements for mobile and tablet devices
+- Consistent button styling and hover effects across all pages
+
+Technical refinements:
+- Export functionality with proper CSV (tab-separated values) and Excel file generation
+- Password change system with secure validation and confirmation matching
+- Enhanced API integration with improved error handling and user feedback
+- Comprehensive testing suite ensuring all functionality works correctly
+- Performance optimizations with proper component memoization
+- Code cleanup and consistency improvements across all components
+
+More details: [README_feat_profile_ui_polish.md](development/README_feat_profile_ui_polish.md)
