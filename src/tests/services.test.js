@@ -70,7 +70,7 @@ describe('Services Tests', () => {
     );
   };
 
-  // Teste básico - verifica se os serviços renderizam
+  // Basic test - verifies if services render
   test('should render services correctly', async () => {
     mockedServiceAPI.getAll.mockResolvedValue({ data: { data: [] } });
 
@@ -81,7 +81,7 @@ describe('Services Tests', () => {
     });
   });
 
-  // Teste de criação de serviço
+  // Service creation test
   test('should create service correctly', async () => {
     mockedServiceAPI.create.mockResolvedValue({ data: { data: mockService } });
 

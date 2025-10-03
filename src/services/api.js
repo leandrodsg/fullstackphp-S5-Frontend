@@ -82,6 +82,18 @@ export const subscriptionAPI = {
   getStats: () => api.get('/subscriptions/stats')
 };
 
+// Profile API functions
+export const profileAPI = {
+  // Get user profile data
+  get: () => api.get('/profile'),
+  
+  // Update user profile data
+  update: (profileData) => api.put('/profile', profileData),
+  
+  // Change user password
+  changePassword: (passwordData) => api.put('/change-password', passwordData)
+};
+
 // Reports API functions
 export const getReports = async (filters = {}) => {
   // This function is deprecated - use subscriptionAPI.getAll() instead
@@ -89,49 +101,88 @@ export const getReports = async (filters = {}) => {
   return subscriptionAPI.getAll();
 };
 
-export const exportReports = async (filters = {}) => {
+// Helper function to format date for display
+const formatDateForExport = (dateString) => {
+  if (!dateString) return 'N/A';
+  try {
+    const date = new Date(dateString);
+    return date.toLocaleDateString('pt-BR');
+  } catch {
+    return dateString;
+  }
+};
+
+// Helper function to format price for display
+const formatPriceForExport = (price, currency = 'USD') => {
+  if (!price) return '0.00';
+  const numPrice = parseFloat(price);
+  if (currency === 'BRL') {
+    return `R$ ${numPrice.toFixed(2).replace('.', ',')}`;
+  }
+  return `$${numPrice.toFixed(2)}`;
+};
+
+// Helper function to get status display text
+const getStatusDisplayText = (status) => {
+  const statusMap = {
+    'active': 'Active',
+    'pending': 'Pending',
+    'canceled': 'Canceled',
+    'cancelled': 'Canceled'
+  };
+  return statusMap[status] || status || 'Active';
+};
+
+// Helper function to get billing cycle display text
+const getBillingCycleDisplayText = (cycle) => {
+  const cycleMap = {
+    'monthly': 'Mensal',
+    'yearly': 'Anual',
+    'weekly': 'Semanal',
+    'daily': 'Diário'
+  };
+  return cycleMap[cycle] || cycle || 'Mensal';
+};
+
+export const exportReports = async (format, filters = {}) => {
   try {
     // Get all subscriptions using the correct endpoint
     const response = await subscriptionAPI.getAll();
-    let subscriptions = response.data || [];
+    let subscriptions = response.data.data || response.data || [];
     
-    // Apply filters
-    if (filters.dateFrom) {
-      const filterDate = new Date(filters.dateFrom);
-      subscriptions = subscriptions.filter(sub => {
-        const subDate = new Date(sub.created_at);
-        return subDate >= filterDate;
-      });
-    }
-    
+    // Apply basic filters
     if (filters.service && filters.service !== 'all') {
       subscriptions = subscriptions.filter(sub => 
-        sub.service_name && sub.service_name.toLowerCase().includes(filters.service.toLowerCase())
+        sub.service_name === filters.service
       );
     }
     
     if (filters.status && filters.status !== 'all') {
-      subscriptions = subscriptions.filter(sub => sub.status === filters.status);
+      subscriptions = subscriptions.filter(sub => 
+        sub.status === filters.status
+      );
     }
     
-    // Generate CSV content
-    const csvHeaders = ['Service Name', 'Price', 'Billing Cycle', 'Status', 'Start Date', 'Next Billing'];
-    const csvRows = subscriptions.map(sub => [
-      sub.service_name || 'N/A',
-      sub.price || '0',
-      sub.billing_cycle || 'monthly',
-      sub.status || 'active',
-      sub.created_at || 'N/A',
-      sub.next_billing_date || 'N/A'
-    ]);
+    // Simple data preparation
+    let content = 'Service,Plan,Price,Status,Next Billing\n';
     
-    const csvContent = [csvHeaders, ...csvRows]
-      .map(row => row.map(field => `"${field}"`).join(','))
-      .join('\n');
+    subscriptions.forEach(sub => {
+      const price = sub.price ? `$${sub.price}` : 'N/A';
+      const status = sub.status === 'active' ? 'Active' : 'Inactive';
+      const date = sub.next_billing_date ? new Date(sub.next_billing_date).toLocaleDateString() : 'N/A';
+      
+      content += `${sub.service_name || 'N/A'},${sub.plan_name || 'N/A'},${price},${status},${date}\n`;
+    });
     
-    // Create blob
-    const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
-    return blob;
+    if (format === 'csv') {
+      return content;
+    } else if (format === 'xlsx') {
+      // For Excel, just use tab-separated values
+      content = content.replace(/,/g, '\t');
+      return content;
+    }
+    
+    throw new Error('Unsupported format');
   } catch (error) {
     console.error('Error exporting reports:', error);
     throw error;
