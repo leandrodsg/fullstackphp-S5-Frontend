@@ -1,0 +1,52 @@
+version: '3.8'
+
+networks:
+  app-network:
+    driver: bridge
+
+services:
+  # React frontend service
+  frontend:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: techsubs-frontend
+    ports:
+      - "3000:80"
+    networks:
+      - app-network
+    volumes:
+      - ./:/app
+      - /app/node_modules
+    environment:
+      - NODE_ENV=development
+    restart: unless-stopped
+    security_opt:
+      - no-new-privileges:true
+    healthcheck:
+      test: ["CMD", "wget", "-q", "--spider", "http://localhost:80"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+
+  # Development service (optional - for development with hot reload)
+  frontend-dev:
+    image: node:20-alpine
+    container_name: techsubs-frontend-dev
+    working_dir: /app
+    command: sh -c "npm ci --no-audit --no-fund && npm start"
+    ports:
+      - "3001:3000"
+    networks:
+      - app-network
+    volumes:
+      - ./:/app
+      - /app/node_modules
+    environment:
+      - NODE_ENV=development
+      - CHOKIDAR_USEPOLLING=true
+      - WDS_SOCKET_PORT=0
+    restart: unless-stopped
+    security_opt:
+      - no-new-privileges:true
+    # Comment out this service in production

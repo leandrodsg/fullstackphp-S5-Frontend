@@ -198,3 +198,37 @@ Technical refinements:
 - Code cleanup and consistency improvements across all components
 
 More details: [README_feat_profile_ui_polish.md](development/README_feat_profile_ui_polish.md)
+
+## Branch deploy/docker-setup
+
+Implements comprehensive Docker deployment configuration for the TechSubs frontend application. The branch provides production-ready containerization with multi-stage builds, nginx configuration, and development environment support following Docker best practices.
+
+Docker deployment features implemented:
+- Multi-stage Dockerfile with optimized production build using node:20-alpine and nginx:alpine
+- docker-compose.yml with separate configurations for production and development environments
+- Custom nginx configuration with SPA routing support and performance optimizations
+- Environment variable management with .env.docker for production deployment
+- .dockerignore optimization for efficient build context and faster builds
+
+Production deployment configuration:
+- Production service running on port 3000 with nginx serving static React build files
+- Development service with hot reload capability running on port 3001
+- Nginx configuration with try_files directive for React Router SPA support
+- Gzip compression and security headers configured for production optimization
+- Environment variables for API integration with backend services
+
+Technical implementation details:
+- Multi-stage build process reducing final image size and improving security
+- Custom nginx.conf with optimized settings for React SPA applications
+- Docker Compose orchestration supporting both production and development workflows
+- Environment variable injection for API URL configuration and version management
+- Build optimization with .dockerignore excluding unnecessary files and directories
+
+Deployment instructions:
+- Complete setup guide with prerequisites and step-by-step installation process
+- Commands for building, running, and managing Docker containers
+- Development environment setup with hot reload for efficient development workflow
+- Production deployment guidelines with Vercel integration support
+- Container management commands for stopping, rebuilding, and maintenance operations
+
+More details: [README_deploy_docker_setup.md](development/README_deploy_docker_setup.md)

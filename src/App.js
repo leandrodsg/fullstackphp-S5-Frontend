@@ -22,7 +22,12 @@ import ProtectedRoute from './components/ProtectedRoute';
 function App() {
   return (
     <AuthProvider>
-      <Router>
+      <Router
+        future={{
+          v7_relativeSplatPath: true,
+          v7_startTransition: true
+        }}
+      >
         <Routes>
           {/* Public routes */}
           <Route path="/" element={<LandingPage />} />
