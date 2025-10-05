@@ -43,11 +43,15 @@ export const AuthProvider = ({ children }) => {
 
   const login = async (email, password, remember = false) => {
     try {
+      console.log('Attempting login with:', { email, password: '***', remember });
+      
       const response = await api.post('/login', {
         email,
         password,
         remember
       });
+
+      console.log('Login response:', response.data);
 
       const { token: access_token } = response.data.data;
 
@@ -66,6 +70,8 @@ export const AuthProvider = ({ children }) => {
       return { success: true, user: userData };
     } catch (error) {
       console.error('Login failed:', error);
+      console.error('Error response:', error.response?.data);
+      console.error('Error status:', error.response?.status);
       
       if (error.response?.status === 422) {
         return {
@@ -83,23 +89,30 @@ export const AuthProvider = ({ children }) => {
         };
       }
 
+      // Handle server errors
+      if (error.response?.status === 500) {
+        return {
+          success: false,
+          message: 'Server error. The user may not exist in the database.'
+        };
+      }
+
       return {
         success: false,
-        message: 'Login failed. Please try again.'
+        message: error.message || 'Login failed. Please try again.'
       };
     }
   };
 
-  const register = async (name, email, password, passwordConfirmation) => {
+  const register = async (name, email, password) => {
     try {
       const response = await api.post('/register', {
         name,
         email,
-        password,
-        password_confirmation: passwordConfirmation
+        password
       });
 
-      const { token: access_token } = response.data.data;
+      const { access_token } = response.data;
 
       // Store token
       localStorage.setItem('auth_token', access_token);
