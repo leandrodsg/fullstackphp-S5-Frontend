@@ -18,20 +18,5 @@
   ],
   "env": {
     "REACT_APP_API_BASE_URL": "https://fullstackphp-sprint5-api.onrender.com/api/v1"
-  },
-  "headers": [
-    {
-      "source": "/(.*)",
-      "headers": [
-        {
-          "key": "X-Content-Type-Options",
-          "value": "nosniff"
-        },
-        {
-          "key": "X-XSS-Protection",
-          "value": "1; mode=block"
-        }
-      ]
-    }
-  ]
+  }
 }
