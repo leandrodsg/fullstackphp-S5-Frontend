@@ -1,11 +1,7 @@
 import React from 'react';
 
 const HeroSection = () => {
-  const scrollToFeatures = () => {
-    document.getElementById('features').scrollIntoView({
-      behavior: 'smooth'
-    });
-  };
+
 
   return (
     <div className="relative overflow-hidden">

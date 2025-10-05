@@ -7,7 +7,6 @@ const Dashboard = () => {
   const { user } = useAuth();
   const navigate = useNavigate();
   const [subscriptions, setSubscriptions] = useState([]);
-  const [profile, setProfile] = useState(null);
   const [availableServices, setAvailableServices] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
@@ -145,7 +144,7 @@ const Dashboard = () => {
                     <img src="/logo_only.svg" alt="TechSubs Logo" className="w-10 h-10 sm:w-12 sm:h-12" />
                   </div>
                   <div>
-                    <h1 className="text-xl sm:text-2xl font-medium text-purple-800">Welcome to TechSubs{profile?.name ? `, ${profile.name}` : ''}!</h1>
+                    <h1 className="text-xl sm:text-2xl font-medium text-purple-800">Welcome to TechSubs{user?.name ? `, ${user.name}` : ''}!</h1>
                     <p className="text-orange-600 mt-1 text-sm sm:text-base">Manage your development tool subscriptions in one place.</p>
                   </div>
                 </div>

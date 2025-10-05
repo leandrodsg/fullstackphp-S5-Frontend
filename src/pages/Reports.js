@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import { subscriptionAPI, exportReports } from '../services/api';
 import { getBillingCycleDisplayText } from '../utils/billingCycleUtils';
 import { 
@@ -27,11 +27,7 @@ const Reports = () => {
     status: 'all'
   };
 
-  useEffect(() => {
-    loadReports();
-  }, [loadReports]);
-
-  const loadReports = async (currentFilters = filters) => {
+  const loadReports = useCallback(async (currentFilters = filters) => {
     try {
       setLoading(true);
       const response = await subscriptionAPI.getAll();
@@ -105,7 +101,11 @@ const Reports = () => {
     } finally {
       setLoading(false);
     }
-  };
+  }, [filters]);
+
+  useEffect(() => {
+    loadReports();
+  }, [loadReports]);
 
   const handleFilterChange = (field, value) => {
     setFilters(prev => ({
