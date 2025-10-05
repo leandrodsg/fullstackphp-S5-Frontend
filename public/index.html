@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <link rel="icon" href="%PUBLIC_URL%/favicon.ico" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="theme-color" content="#000000" />
+    <meta
+      name="description"
+      content="TechSubs - Manage your tech subscriptions"
+    />
+    <link rel="apple-touch-icon" href="%PUBLIC_URL%/logo192.png" />
+    <link rel="manifest" href="%PUBLIC_URL%/manifest.json" />
+    <link rel="preconnect" href="https://fonts.bunny.net">
+    <link href="https://fonts.bunny.net/css?family=figtree:400,500,600&display=swap" rel="stylesheet">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+      tailwind.config = {
+        theme: {
+          extend: {
+            fontFamily: {
+              sans: ['Figtree', 'sans-serif'],
+            },
+            colors: {
+              'pastel-purple': {
+                50: '#f5f0ff',
+                100: '#ebe0ff',
+                200: '#d7c3ff',
+                300: '#c8a9ff',
+                400: '#bf9bff',
+                500: '#a56eff',
+                600: '#9147ff',
+                700: '#7c2dff',
+                800: '#6b28d9',
+                900: '#5a21b6',
+              },
+              'pastel-salmon': {
+                50: '#fff3f0',
+                100: '#ffe5e0',
+                200: '#ffddd5',
+                300: '#ffc4b5',
+                400: '#ff9d85',
+                500: '#ff7654',
+                600: '#ff5722',
+                700: '#f4511e',
+                800: '#e64a19',
+                900: '#d84315',
+              }
+            }
+          }
+        }
+      }
+    </script>
+    <!--
+      Notice the use of %PUBLIC_URL% in the tags above.
+      It will be replaced with the URL of the `public` folder during the build.
+      Only files inside the `public` folder can be referenced from the HTML.
+
+      Unlike "/favicon.ico" or "favicon.ico", "%PUBLIC_URL%/favicon.ico" will
+      work correctly both with client-side routing and a non-root public URL.
+      Learn how to configure a non-root public URL by running `npm run build`.
+    -->
+    <title>TechSubs - Manage your tech subscriptions</title>
+  </head>
+  <body>
+    <noscript>You need to enable JavaScript to run this app.</noscript>
+    <div id="root"></div>
+    <!--
+      This HTML file is a template.
+      If you open it directly in the browser, you will see an empty page.
+
+      You can add webfonts, meta tags, or analytics to this file.
+      The build step will place the bundled scripts into the <body> tag.
+
+      To begin the development, run `npm start` or `yarn start`.
+      To create a production bundle, use `npm run build` or `yarn build`.
+    -->
+  </body>
+</html>
