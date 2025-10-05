@@ -10,25 +10,52 @@ The complete system includes user authentication, subscription management, servi
 
 ## Requirements
 
-- Node.js 14+
+- Node.js 20+
 - npm
 - TechSubs API running (Sprint 5 backend)
 
 ## Installation
 
+### Standard Installation
+
 Clone the repository and install dependencies:
 
 ```bash
-npm install
+npm ci --no-audit --no-fund
 ```
 
 Configure environment variables by creating a .env file:
 
 ```
-REACT_APP_API_BASE_URL=http://localhost:8000/api/v1
+REACT_APP_API_URL=https://fullstackphp-sprint5-api.onrender.com
+REACT_APP_API_VERSION=v1
 ```
 
+### Docker Installation
+
+The application can also be run using Docker:
+
+```bash
+# Build and start the container
+docker-compose up -d
+
+# For development with hot reload
+docker-compose up -d frontend-dev
+```
+
+### Vercel Deployment
+
+For Vercel deployment:
+
+1. Connect your GitHub repository to Vercel
+2. Configure environment variables:
+   - `REACT_APP_API_URL=https://fullstackphp-sprint5-api.onrender.com`
+   - `REACT_APP_API_VERSION=v1`
+3. Or use the `vercel.json` file already configured in the project
+
 ## Usage
+
+### Standard Usage
 
 Start the development server:
 
@@ -47,6 +74,40 @@ Build for production:
 ```bash
 npm run build
 ```
+
+### Docker Usage
+
+Access the application:
+- Production build: http://localhost:3000
+- Development server with hot reload: http://localhost:3001
+
+View logs:
+```bash
+# Production container
+docker logs techsubs-frontend
+
+# Development container
+docker logs techsubs-frontend-dev
+```
+
+Stop containers:
+```bash
+docker-compose down
+```
+
+### Vercel Usage
+
+After deployment, the application will be available at the URL provided by Vercel.
+To update the application, simply push to the connected repository.
+
+## Security
+
+This project follows 2025 security best practices:
+- Node.js 20 with latest security updates
+- Security configurations for Vercel and Docker
+- Configured security headers
+- Input validation on all forms
+- Secure token storage
 
 ## Features
 
