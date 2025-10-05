@@ -1,7 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate, useParams } from 'react-router';
 import { subscriptionAPI, serviceAPI } from '../services/api';
-import { getInitials } from '../utils/helpers';
 import { calculateBillingCycleFromDates, getBillingCycleDisplayText } from '../utils/billingCycleUtils';
 
 const SubscriptionDetails = () => {

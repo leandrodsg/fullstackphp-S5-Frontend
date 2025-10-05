@@ -192,8 +192,8 @@ const Register = () => {
               © {new Date().getFullYear()} TechSubs. Secure authentication for developers.
             </p>
             <div className="flex space-x-4 text-sm text-purple-600">
-              <a href="#" className="hover:text-purple-800 transition-colors">Privacy</a>
-              <a href="#" className="hover:text-purple-800 transition-colors">Terms</a>
+              <button className="hover:text-purple-800 transition-colors">Privacy</button>
+              <button className="hover:text-purple-800 transition-colors">Terms</button>
             </div>
           </div>
         </div>

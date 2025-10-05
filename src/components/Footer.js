@@ -13,15 +13,15 @@ const Footer = () => {
             for developers.
           </p>
           <div className="flex space-x-4 text-sm text-purple-600">
-            <a href="#" className="hover:text-purple-800 transition-colors">
+            <button className="hover:text-purple-800 transition-colors">
               Privacy
-            </a>
-            <a href="#" className="hover:text-purple-800 transition-colors">
+            </button>
+            <button className="hover:text-purple-800 transition-colors">
               Terms
-            </a>
-            <a href="#" className="hover:text-purple-800 transition-colors">
+            </button>
+            <button className="hover:text-purple-800 transition-colors">
               Support
-            </a>
+            </button>
           </div>
         </div>
       </div>

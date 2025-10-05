@@ -127,47 +127,47 @@ export const getReports = async (filters = {}) => {
 };
 
 // Helper function to format date for display
-const formatDateForExport = (dateString) => {
-  if (!dateString) return 'N/A';
-  try {
-    const date = new Date(dateString);
-    return date.toLocaleDateString('pt-BR');
-  } catch {
-    return dateString;
-  }
-};
+// const formatDateForExport = (dateString) => {
+//   if (!dateString) return 'N/A';
+//   try {
+//     const date = new Date(dateString);
+//     return date.toLocaleDateString('pt-BR');
+//   } catch {
+//     return dateString;
+//   }
+// };
 
 // Helper function to format price for display
-const formatPriceForExport = (price, currency = 'USD') => {
-  if (!price) return '0.00';
-  const numPrice = parseFloat(price);
-  if (currency === 'BRL') {
-    return `R$ ${numPrice.toFixed(2).replace('.', ',')}`;
-  }
-  return `$${numPrice.toFixed(2)}`;
-};
+// const formatPriceForExport = (price, currency = 'USD') => {
+//   if (!price) return '0.00';
+//   const numPrice = parseFloat(price);
+//   if (currency === 'BRL') {
+//     return `R$ ${numPrice.toFixed(2).replace('.', ',')}`;
+//   }
+//   return `$${numPrice.toFixed(2)}`;
+// };
 
 // Helper function to get status display text
-const getStatusDisplayText = (status) => {
-  const statusMap = {
-    'active': 'Active',
-    'pending': 'Pending',
-    'canceled': 'Canceled',
-    'cancelled': 'Canceled'
-  };
-  return statusMap[status] || status || 'Active';
-};
+// const getStatusDisplayText = (status) => {
+//   const statusMap = {
+//     'active': 'Active',
+//     'pending': 'Pending',
+//     'canceled': 'Canceled',
+//     'cancelled': 'Canceled'
+//   };
+//   return statusMap[status] || status || 'Active';
+// };
 
 // Helper function to get billing cycle display text
-const getBillingCycleDisplayText = (cycle) => {
-  const cycleMap = {
-    'monthly': 'Mensal',
-    'yearly': 'Anual',
-    'weekly': 'Semanal',
-    'daily': 'Diário'
-  };
-  return cycleMap[cycle] || cycle || 'Mensal';
-};
+// const getBillingCycleDisplayText = (cycle) => {
+//   const cycleMap = {
+//     'monthly': 'Mensal',
+//     'yearly': 'Anual',
+//     'weekly': 'Semanal',
+//     'daily': 'Diário'
+//   };
+//   return cycleMap[cycle] || cycle || 'Mensal';
+// };
 
 export const exportReports = async (format, filters = {}) => {
   try {

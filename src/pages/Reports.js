@@ -29,7 +29,7 @@ const Reports = () => {
 
   useEffect(() => {
     loadReports();
-  }, []);
+  }, [loadReports]);
 
   const loadReports = async (currentFilters = filters) => {
     try {

@@ -131,9 +131,9 @@ const Login = () => {
                     </label>
                   </div>
                   <div className="text-sm">
-                    <a href="#" className="font-medium text-purple-600 hover:text-purple-500">
+                    <button className="font-medium text-purple-600 hover:text-purple-500">
                       Forgot your password?
-                    </a>
+                    </button>
                   </div>
                 </div>
 
@@ -174,8 +174,8 @@ const Login = () => {
               © {new Date().getFullYear()} TechSubs. Secure authentication for developers.
             </p>
             <div className="flex space-x-4 text-sm text-purple-600">
-              <a href="#" className="hover:text-purple-800 transition-colors">Privacy</a>
-              <a href="#" className="hover:text-purple-800 transition-colors">Terms</a>
+              <button className="hover:text-purple-800 transition-colors">Privacy</button>
+              <button className="hover:text-purple-800 transition-colors">Terms</button>
             </div>
           </div>
         </div>

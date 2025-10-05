@@ -1,7 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router';
 import { serviceAPI } from '../services/api';
-import { getInitials } from '../utils/helpers';
 
 const ServiceDetails = () => {
   const { id } = useParams();
