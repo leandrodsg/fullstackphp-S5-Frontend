@@ -42,8 +42,5 @@
         }
       ]
     }
-  ],
-  "env": {
-    "REACT_APP_API_BASE_URL": "https://fullstackphp-sprint5-api.onrender.com/api/v1"
-  }
+  ]
 }
