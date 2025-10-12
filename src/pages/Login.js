@@ -27,15 +27,11 @@ const Login = () => {
     setLoading(true);
     setErrors({});
 
-    console.log('🚀 Login form submitted:', formData);
     const result = await login(formData.email, formData.password, formData.remember);
-    console.log('📊 Login result:', result);
     
     if (result.success) {
-      console.log('✅ Navigating to dashboard');
       navigate('/dashboard');
     } else {
-      console.log('❌ Login failed, showing errors:', result.errors);
       setErrors(result.errors || { general: [result.message || 'Login failed'] });
     }
     

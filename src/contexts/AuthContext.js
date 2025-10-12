@@ -48,21 +48,15 @@ export const AuthProvider = ({ children }) => {
 
   const login = async (email, password, remember = false) => {
     try {
-      console.log('🔐 Login attempt:', { email, remember });
-      
       const response = await api.post('/login', {
         email,
         password,
         remember
       });
 
-      console.log('📨 Login response:', response);
-      console.log('📦 Response data:', response.data);
-
       // API response structure: { success, message, data: { user, token } }
       if (response.data && response.data.success && response.data.data) {
         const { token, user } = response.data.data;
-        console.log('✅ Login successful:', { user, tokenLength: token?.length });
 
         // Store token
         localStorage.setItem('auth_token', token);
@@ -77,18 +71,12 @@ export const AuthProvider = ({ children }) => {
       }
 
       // If response doesn't have expected structure
-      console.warn('⚠️ Unexpected response structure:', response.data);
       return {
         success: false,
         message: response.data?.message || 'Login failed. Invalid response from server.'
       };
     } catch (error) {
-      console.error('❌ Login failed:', error);
-      console.error('📋 Error details:', {
-        status: error.response?.status,
-        data: error.response?.data,
-        message: error.message
-      });
+      console.error('Login failed:', error);
       
       // Handle validation errors (422)
       if (error.response?.status === 422) {
