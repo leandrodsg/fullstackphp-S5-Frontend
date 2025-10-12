@@ -42,3 +42,38 @@ Configure API authentication using Laravel Passport, ensuring that the system ac
 
 The created test is located at tests/Feature/PassportAuthTest.php 
 It checks if a user authenticated with Passport can access the /api/user route.
+
+## Known Issues and Resolutions
+
+### OAuth Migration Issues (October 2025)
+
+During post-implementation testing, several OAuth installation issues were identified and resolved:
+
+#### 1. Installation Sequence Problems
+**Problem**: Users experienced failures when running `php artisan install:api --passport` on fresh installations.
+
+**Root Cause**: The installation sequence in the documentation was incorrect, causing conflicts during OAuth setup.
+
+**Resolution**: Updated installation procedure:
+1. Run `php artisan migrate` first to create base tables
+2. Then run `php artisan install:api --passport` 
+3. Clear configuration cache with `php artisan config:cache`
+
+#### 2. Session Storage Conflicts
+**Problem**: Local development environments had session path conflicts between Docker and traditional setups.
+
+**Resolution**: Added environment-specific session configuration guidance in the main README.
+
+#### 3. Documentation Inconsistencies  
+**Problem**: API response format examples across documentation files were inconsistent.
+
+**Resolution**: Standardized all authentication examples to use the correct response format with `response.data.token`.
+
+### Best Practices Learned
+
+1. **Always test OAuth installation on fresh environments** before deployment
+2. **Document the correct installation sequence** for different environments
+3. **Include troubleshooting steps** for common OAuth setup issues
+4. **Maintain consistency** in API response format documentation
+
+These corrections ensure that new installations follow the correct OAuth setup sequence without conflicts.

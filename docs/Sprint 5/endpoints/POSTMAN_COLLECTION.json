@@ -43,7 +43,7 @@
 						],
 						"body": {
 							"mode": "raw",
-							"raw": "{\n  \"name\": \"Test User\",\n  \"email\": \"test@test.com\",\n  \"password\": \"TestPassword@123\",\n  \"password_confirmation\": \"TestPassword@123\"\n}"
+							"raw": "{\n  \"name\": \"New User\",\n  \"email\": \"newuser@example.com\",\n  \"password\": \"TestPassword@123\",\n  \"password_confirmation\": \"TestPassword@123\"\n}"
 						},
 						"url": {
 							"raw": "{{base_url}}/register",
@@ -61,7 +61,9 @@
 								"exec": [
 									"if (pm.response.code === 200) {",
 									"    const response = pm.response.json();",
-									"    pm.collectionVariables.set('access_token', response.access_token);",
+									"    if (response.success && response.data && response.data.token) {",
+									"        pm.collectionVariables.set('access_token', response.data.token);",
+									"    }",
 									"}"
 								],
 								"type": "text/javascript"
@@ -78,7 +80,7 @@
 						],
 						"body": {
 							"mode": "raw",
-							"raw": "{\n  \"email\": \"test@test.com\",\n  \"password\": \"TestPassword@123\"\n}"
+							"raw": "{\n  \"email\": \"user@example.com\",\n  \"password\": \"UserPassword@123\"\n}"
 						},
 						"url": {
 							"raw": "{{base_url}}/login",
@@ -100,6 +102,18 @@
 					}
 				},
 				{
+					"name": "Get User (Alias)",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/user",
+							"host": ["{{base_url}}"],
+							"path": ["user"]
+						}
+					}
+				},
+				{
 					"name": "Change Password",
 					"request": {
 						"method": "PUT",
@@ -111,7 +125,7 @@
 						],
 						"body": {
 							"mode": "raw",
-							"raw": "{\n  \"current_password\": \"TestPassword@123\",\n  \"password\": \"NewTestPassword@123\",\n  \"password_confirmation\": \"NewTestPassword@123\"\n}"
+							"raw": "{\n  \"current_password\": \"UserPassword@123\",\n  \"password\": \"NewUserPassword@123\",\n  \"password_confirmation\": \"NewUserPassword@123\"\n}"
 						},
 						"url": {
 							"raw": "{{base_url}}/change-password",
@@ -161,7 +175,7 @@
 						],
 						"body": {
 							"mode": "raw",
-							"raw": "{\n  \"name\": \"Netflix\",\n  \"category\": \"Streaming\",\n  \"price\": 15.99,\n  \"billing_cycle\": \"monthly\"\n}"
+							"raw": "{\n  \"name\": \"Netflix\",\n  \"category\": \"Streaming\",\n  \"description\": \"Video streaming service\",\n  \"website_url\": \"https://netflix.com\"\n}"
 						},
 						"url": {
 							"raw": "{{base_url}}/services",
@@ -194,7 +208,7 @@
 						],
 						"body": {
 							"mode": "raw",
-							"raw": "{\n  \"name\": \"Netflix Premium\",\n  \"category\": \"Streaming\",\n  \"price\": 19.99,\n  \"billing_cycle\": \"monthly\"\n}"
+							"raw": "{\n  \"name\": \"Netflix Premium\",\n  \"category\": \"Streaming\",\n  \"description\": \"Premium video streaming service\",\n  \"website_url\": \"https://netflix.com\"\n}"
 						},
 						"url": {
 							"raw": "{{base_url}}/services/1",
@@ -244,7 +258,7 @@
 						],
 						"body": {
 							"mode": "raw",
-							"raw": "{\n  \"service_id\": 1,\n  \"start_date\": \"2024-01-01\",\n  \"billing_cycle\": \"monthly\"\n}"
+							"raw": "{\n  \"service_id\": 1,\n  \"plan\": \"Premium Plan\",\n  \"price\": 15.99,\n  \"currency\": \"USD\",\n  \"next_billing_date\": \"2024-12-01\",\n  \"status\": \"active\"\n}"
 						},
 						"url": {
 							"raw": "{{base_url}}/subscriptions",
@@ -277,7 +291,7 @@
 						],
 						"body": {
 							"mode": "raw",
-							"raw": "{\n  \"billing_cycle\": \"annual\"\n}"
+							"raw": "{\n  \"plan\": \"Annual Plan\",\n  \"price\": 150.00,\n  \"currency\": \"USD\",\n  \"next_billing_date\": \"2025-01-01\",\n  \"status\": \"active\"\n}"
 						},
 						"url": {
 							"raw": "{{base_url}}/subscriptions/1",

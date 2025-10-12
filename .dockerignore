@@ -1,8 +1,48 @@
+# Dependencies
 node_modules
-npm-debug.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# Build
 build
+
+# Git
 .git
 .github
+.gitignore
+
+# Environment files (Docker usa apenas .env.docker)
+.env
+.env.local
+.env.*.local
+
+# Testing
+coverage
+*.test.js
+
+# Documentation
+docs/
+
+# IDE
+.vscode
+.idea
+*.swp
+*.swo
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Vercel
+.vercel
+.vercelignore
+vercel.json
+
+# OAuth keys (não devem estar no frontend)
+oauth-private.key
+oauth-public.key
+cookies.txt
 .gitignore
 .env.local
 .env.development.local

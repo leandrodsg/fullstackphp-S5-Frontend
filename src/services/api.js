@@ -49,8 +49,14 @@ api.interceptors.response.use(
   (response) => response,
   (error) => {
     if (error.response?.status === 401) {
-      localStorage.removeItem('token');
-      window.location.href = '/login';
+      // Remove auth token on 401 errors
+      localStorage.removeItem('auth_token');
+      delete api.defaults.headers.common['Authorization'];
+      
+      // Redirect to login only if not already on login/register pages
+      if (!window.location.pathname.includes('/login') && !window.location.pathname.includes('/register')) {
+        window.location.href = '/login';
+      }
     }
     return Promise.reject(error);
   }

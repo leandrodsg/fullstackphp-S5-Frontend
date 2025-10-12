@@ -193,8 +193,50 @@ Technical details:
 
 More details: [README_feat_data_export_functionality.md](../Sprint%205/development/README_feat_data_export_functionality.md)
 
+## 9. Branch feat/backend-improvements
+
+The feat/backend-improvements branch focused on enhancing the API's data consistency, user experience, and maintainability through strategic improvements to existing endpoints and resources. These improvements were designed to provide better frontend integration capabilities while maintaining code quality and following Laravel best practices.
+
+Improvements implemented:
+- Automatic Billing Cycle Detection: Enhanced `SubscriptionController` with intelligent billing cycle calculation based on plan names, automatically setting 'annual' for plans containing "Annual" or "Yearly", and 'monthly' for others.
+- Standardized Date Formatting: Implemented consistent ISO 8601 date format across all API resources (`SubscriptionResource` and `ServiceResource`) for `created_at`, `updated_at`, and `next_billing_date` fields.
+- Enhanced API Resources: Added calculated fields to `SubscriptionResource` including `days_until_next_billing`, `is_expired`, and `price_with_currency` for improved frontend data consumption.
+- Robust Input Validation: Strengthened validation rules in both `SubscriptionController` and `ServiceController` with specific constraints for currency codes, date validation, status enums, and foreign key relationships.
+- Testing: Updated and expanded test suites to ensure all improvements work correctly, including dynamic date handling in tests and validation of new calculated fields.
+
+More details: [README_feat_backend_improvements.md](../Sprint%205/development/README_feat_backend_improvements.md)
+
+## 10. Branch feature/improve-subscription-resource
+
+The feature/improve-subscription-resource branch focused on optimizing the SubscriptionResource performance and data completeness by addressing N+1 query issues and adding missing fields that were causing frontend workarounds. This branch was created to resolve specific issues identified in the `/reports/my-expenses` endpoint where `service_name` and `billing_cycle` fields were missing, forcing the frontend team to implement temporary solutions.
+
+Technical improvements implemented:
+- Eager Loading Implementation: Added `->with('service')` to all SubscriptionController methods (index, show, update, cancel, reactivate) to eliminate N+1 queries when loading subscription collections.
+- Service Name Integration: Added `service_name` field to SubscriptionResource by accessing the eager-loaded service relationship (`$this->service->name ?? null`).
+- Calculated Billing Cycle: Implemented `calculateBillingCycle()` method in the Subscription model that intelligently determines billing frequency based on the difference between `created_at` and `next_billing_date` (≥330 days = annual, otherwise monthly).
+- Enhanced Helper Methods: Added `calculateDaysUntilNextBilling()`, `isExpired()`, and `getPriceWithCurrency()` methods to the Subscription model for consistent calculated field generation.
+- Testing: Updated ApiResourcesTest to validate all new fields including `service_name`, `billing_cycle`, and calculated fields, ensuring data integrity and proper eager loading functionality.
+
+The improvements ensure that `GET /api/v1/subscriptions` now provides complete data including `service_name` and `billing_cycle`, eliminating the need for frontend teams to use the limited `/reports/my-expenses` endpoint or implement workarounds for missing data.
+
+More details: [README_feature_improve_subscription_resource.md](../Sprint%205/development/README_feature_improve_subscription_resource.md)
+
 ### LEVEL 2 (API Documentation)
-- 9. Branch docs/api-documentation
+- 11. Branch docs/api-documentation
 
 ### LEVEL 3 (Deployment)
-- 10. Branch deploy/production-setup
+## 12. Branch deploy/laravel-api-docker
+
+The deploy/laravel-api-docker branch focused on preparing the TechSubs API for production deployment using Docker containerization and cloud infrastructure. This branch implemented a complete deployment strategy with optimized Docker configuration, PostgreSQL integration via Neon, and automated deployment to Render platform.
+
+Technical implementations:
+- Optimized Production Dockerfile: Multi-stage build process removing development dependencies, English comments for international collaboration, and streamlined container size for faster deployments.
+- PostgreSQL Integration: Migration from MySQL to PostgreSQL for production environment, with connection configuration for Neon cloud database service.
+- Render Deployment Configuration: Complete `render.yaml` configuration file with environment variables, health checks, and automatic deployment triggers from GitHub repository.
+- Environment Management: Production-ready environment variable configuration including secure `APP_KEY` generation, database credentials, and logging configuration.
+- Docker Compose Enhancement: Updated development environment to support both local development and production testing scenarios.
+- Deployment Documentation: Comprehensive step-by-step guide for local development, production preparation, and cloud deployment.
+
+More details: [README_deploy_guidance.md](development/README_deploy_guidance.md)
+
+---

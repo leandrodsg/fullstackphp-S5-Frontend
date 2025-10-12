@@ -23,4 +23,10 @@ npm-debug.log*
 yarn-debug.log*
 yarn-error.log*
 
+# OAuth keys (backend only, should not be in frontend)
+oauth-private.key
+oauth-public.key
+*.key
+cookies.txt
+
 /docs/Sprint 5 Front/Wireframe/views/

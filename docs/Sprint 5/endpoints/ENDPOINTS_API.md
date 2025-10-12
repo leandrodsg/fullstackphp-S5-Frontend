@@ -2,6 +2,8 @@
 
 This documentation describes the current REST API endpoints for the TechSubs system, reflecting all changes and improvements made in Sprint 5. For reference, the original pre-project API documentation is preserved in the file `ENDPOINTS_API_PREPROJECT.md` in this folder.
 
+> **Last Updated**: October 2025 - Corrected OAuth installation issues, standardized API response formats, and updated all endpoint examples to reflect actual implementation.
+
 ## Contents
 
 - Overview
@@ -56,7 +58,6 @@ GET /api/v1/subscriptions
 POST /api/v1/subscriptions
 GET /api/v1/subscriptions/{id}
 PUT /api/v1/subscriptions/{id}
-PATCH /api/v1/subscriptions/{id}
 PATCH /api/v1/subscriptions/{id}/cancel
 PATCH /api/v1/subscriptions/{id}/reactivate
 DELETE /api/v1/subscriptions/{id}

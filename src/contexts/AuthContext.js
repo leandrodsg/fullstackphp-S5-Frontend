@@ -25,14 +25,19 @@ export const AuthProvider = ({ children }) => {
           api.defaults.headers.common['Authorization'] = `Bearer ${savedToken}`;
           
           const response = await api.get('/profile');
-          setUser(response.data.user);
+          // API response structure: { success, message, data: { id, name, email, role } }
+          setUser(response.data.data);
           setToken(savedToken);
         } catch (error) {
           console.error('Token validation failed:', error);
-          localStorage.removeItem('auth_token');
-          delete api.defaults.headers.common['Authorization'];
-          setToken(null);
-          setUser(null);
+          // Limpa tudo se o token estiver inválido (401) ou expirado (500)
+          if (error.response?.status === 401 || error.response?.status === 500) {
+            console.log('Clearing invalid/expired token');
+            localStorage.removeItem('auth_token');
+            delete api.defaults.headers.common['Authorization'];
+            setToken(null);
+            setUser(null);
+          }
         }
       }
       setLoading(false);
@@ -43,98 +48,130 @@ export const AuthProvider = ({ children }) => {
 
   const login = async (email, password, remember = false) => {
     try {
+      console.log('🔐 Login attempt:', { email, remember });
+      
       const response = await api.post('/login', {
         email,
         password,
         remember
       });
 
-      const { token: access_token } = response.data.data;
+      console.log('📨 Login response:', response);
+      console.log('📦 Response data:', response.data);
 
-      // Store token
-      localStorage.setItem('auth_token', access_token);
-      
-      // Set token in API headers
-      api.defaults.headers.common['Authorization'] = `Bearer ${access_token}`;
-      
-      setToken(access_token);
-      
-      const profileResponse = await api.get('/profile');
-      const userData = profileResponse.data.data.user;
-      setUser(userData);
+      // API response structure: { success, message, data: { user, token } }
+      if (response.data && response.data.success && response.data.data) {
+        const { token, user } = response.data.data;
+        console.log('✅ Login successful:', { user, tokenLength: token?.length });
 
-      return { success: true, user: userData };
+        // Store token
+        localStorage.setItem('auth_token', token);
+        
+        // Set token in API headers
+        api.defaults.headers.common['Authorization'] = `Bearer ${token}`;
+        
+        setToken(token);
+        setUser(user);
+
+        return { success: true, user };
+      }
+
+      // If response doesn't have expected structure
+      console.warn('⚠️ Unexpected response structure:', response.data);
+      return {
+        success: false,
+        message: response.data?.message || 'Login failed. Invalid response from server.'
+      };
     } catch (error) {
-      console.error('Login failed:', error);
+      console.error('❌ Login failed:', error);
+      console.error('📋 Error details:', {
+        status: error.response?.status,
+        data: error.response?.data,
+        message: error.message
+      });
       
+      // Handle validation errors (422)
       if (error.response?.status === 422) {
         return {
           success: false,
-          errors: error.response.data.errors || {},
-          message: error.response.data.message || 'Validation failed'
+          errors: error.response.data?.data || error.response.data?.errors || {},
+          message: error.response.data?.message || 'Validation failed'
         };
       }
       
-      // Handle authentication errors
+      // Handle authentication errors (401)
       if (error.response?.status === 401) {
         return {
           success: false,
-          message: 'Invalid credentials. Please check your email and password.'
+          message: error.response.data?.message || 'Invalid credentials. Please check your email and password.'
         };
       }
 
-      // Handle server errors
+      // Handle server errors (500)
       if (error.response?.status === 500) {
+        const serverMsg = error.response?.data?.message || '';
         return {
           success: false,
-          message: 'Production API is temporarily unavailable. Please try again later or contact support.'
+          message: serverMsg === 'Server Error' 
+            ? '🔧 Backend API error (500). The server may be starting up or experiencing issues. Please wait 30 seconds and try again.' 
+            : 'API is temporarily unavailable. Please try again later.'
         };
       }
 
+      // Generic error handling
       return {
         success: false,
-        message: error.message || 'Login failed. Please try again.'
+        message: error.response?.data?.message || error.message || 'Login failed. Please try again.'
       };
     }
   };
 
-  const register = async (name, email, password) => {
+  const register = async (name, email, password, password_confirmation) => {
     try {
       const response = await api.post('/register', {
         name,
         email,
-        password
+        password,
+        password_confirmation
       });
 
-      const { access_token } = response.data;
+      // API response structure: { success, message, data: { user, token } }
+      if (response.data && response.data.success && response.data.data) {
+        const { token, user } = response.data.data;
 
-      // Store token
-      localStorage.setItem('auth_token', access_token);
-      
-      // Set token in API headers
-      api.defaults.headers.common['Authorization'] = `Bearer ${access_token}`;
-      
-      setToken(access_token);
-      
-      const profileResponse = await api.get('/profile');
-      const userData = profileResponse.data.data.user;
-      setUser(userData);
+        // Store token
+        localStorage.setItem('auth_token', token);
+        
+        // Set token in API headers
+        api.defaults.headers.common['Authorization'] = `Bearer ${token}`;
+        
+        setToken(token);
+        setUser(user);
 
-      return { success: true, user: userData };
+        return { success: true, user };
+      }
+
+      // If response doesn't have expected structure
+      return {
+        success: false,
+        message: response.data?.message || 'Registration failed. Invalid response from server.'
+      };
     } catch (error) {
       console.error('Registration failed:', error);
       
+      // Handle validation errors (422)
       if (error.response?.status === 422) {
         return {
           success: false,
-          errors: error.response.data.errors || {},
-          message: error.response.data.message || 'Validation failed'
+          errors: error.response.data?.data || error.response.data?.errors || {},
+          message: error.response.data?.message || 'Validation failed'
         };
       }
 
+      // Generic error handling
       return {
         success: false,
-        message: 'Registration failed. Please try again.'
+        message: error.response?.data?.message || error.message || 'Registration failed. Please try again.'
       };
     }
   };

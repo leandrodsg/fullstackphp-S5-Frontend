@@ -27,12 +27,16 @@ const Login = () => {
     setLoading(true);
     setErrors({});
 
+    console.log('🚀 Login form submitted:', formData);
     const result = await login(formData.email, formData.password, formData.remember);
+    console.log('📊 Login result:', result);
     
     if (result.success) {
+      console.log('✅ Navigating to dashboard');
       navigate('/dashboard');
     } else {
-      setErrors(result.errors || {});
+      console.log('❌ Login failed, showing errors:', result.errors);
+      setErrors(result.errors || { general: [result.message || 'Login failed'] });
     }
     
     setLoading(false);
@@ -71,7 +75,9 @@ const Login = () => {
               {/* Errors */}
               {Object.keys(errors).length > 0 && (
                 <div className="mb-6 bg-red-100 border border-red-300 rounded-md py-2 px-3">
-                  <div className="text-sm text-red-600 font-medium mb-2">Oops! Something went wrong:</div>
+                  <div className="text-sm text-red-600 font-medium mb-2">
+                    {errors.general ? 'Error:' : 'Oops! Something went wrong:'}
+                  </div>
                   <ul className="text-sm text-red-600 list-disc list-inside">
                     {Object.values(errors).flat().map((error, index) => (
                       <li key={index}>{error}</li>
