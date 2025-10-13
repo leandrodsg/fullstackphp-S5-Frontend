@@ -1,5 +1,5 @@
 import React from 'react';
-import { BrowserRouter as Router, Routes, Route } from 'react-router';
+import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 import { AuthProvider } from './contexts/AuthContext';
 import LandingPage from './pages/LandingPage';
 import Login from './pages/Login';
@@ -22,12 +22,7 @@ import ProtectedRoute from './components/ProtectedRoute';
 function App() {
   return (
     <AuthProvider>
-      <Router
-        future={{
-          v7_relativeSplatPath: true,
-          v7_startTransition: true
-        }}
-      >
+      <Router>
         <Routes>
           {/* Public routes */}
           <Route path="/" element={<LandingPage />} />

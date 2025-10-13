@@ -11,14 +11,16 @@ TechSubs Frontend provides a complete React-based interface for managing digital
 Before installing, ensure you have:
 
 - Node.js 20+ and npm 10+
-- TechSubs API running locally on http://localhost:8000
-- Modern web browser with JavaScript enabled
+- The TechSubs API backend running locally on `http://127.0.0.1:8000`. Please follow the setup instructions in the backend repository to get it running.
+- A modern web browser with JavaScript enabled.
 
 For Docker setup:
 - Docker Desktop 4.0+
 - Docker Compose
 
 ## Installation
+
+> **Important:** This frontend requires the TechSubs API backend to be running. Before proceeding, make sure you have cloned, installed, and started the backend service.
 
 ### Local Setup
 
@@ -43,10 +45,10 @@ npm ci --no-audit --no-fund
 cp .env.example .env.local
 ```
 
-Edit .env.local and set the API URL to your local backend:
+Edit `.env.local` and set the API URL to your local backend:
 
 ```
-REACT_APP_API_BASE_URL=http://localhost:8000/api/v1
+REACT_APP_API_BASE_URL=http://127.0.0.1:8000/api/v1
 ```
 
 4. Verify backend is running
@@ -54,7 +56,7 @@ REACT_APP_API_BASE_URL=http://localhost:8000/api/v1
 Before starting the frontend, ensure the backend API is accessible:
 
 ```bash
-curl http://localhost:8000/api/v1/categories
+curl http://127.0.0.1:8000/api/v1/categories
 ```
 
 If this command fails, start the backend first.
@@ -65,7 +67,7 @@ If this command fails, start the backend first.
 npm start
 ```
 
-The application will open automatically at http://localhost:3000
+The application will open automatically at `http://localhost:3000`.
 
 ### Docker Setup
 
@@ -86,36 +88,36 @@ docker-compose up -d
 
 3. Access the application
 
-The application will be available at http://localhost:3000
+The application will be available at `http://localhost:3000`.
 
 ## Test Accounts
 
-Use these credentials to login after installation:
+Use these credentials to log in after installation:
 
-USER account (regular user with sample data):
-- Email: user@example.com
-- Password: UserPassword@123
+**USER account** (regular user with sample data):
+- **Email:** `user@example.com`
+- **Password:** `UserPassword@123`
 
-ADMIN account (administrator with empty profile):
-- Email: admin@example.com
-- Password: AdminPassword@123
+**ADMIN account** (administrator with an empty profile):
+- **Email:** `admin@example.com`
+- **Password:** `AdminPassword@123`
 
 ## Testing the Application
 
-1. Access http://localhost:3000
-2. Click Login
-3. Enter test credentials
-4. Navigate through the dashboard
+1. Access `http://localhost:3000`.
+2. Click **Login**.
+3. Enter the test credentials.
+4. Navigate through the dashboard.
 
 Main routes:
-- / - Landing page
-- /login - Authentication
-- /register - User registration
-- /dashboard - Main dashboard (requires login)
-- /services - Service management
-- /subscriptions - Subscription management
-- /reports - Expense reports
-- /profile - User profile
+- `/` - Landing page
+- `/login` - Authentication
+- `/register` - User registration
+- `/dashboard` - Main dashboard (requires login)
+- `/services` - Service management
+- `/subscriptions` - Subscription management
+- `/reports` - Expense reports
+- `/profile` - User profile
 
 ## Troubleshooting
 
@@ -124,12 +126,17 @@ Main routes:
 Check if port 3000 is already in use:
 
 ```bash
+# For Windows
 netstat -ano | findstr :3000
+
+# For macOS/Linux
+lsof -i :3000
 ```
 
 Clear npm cache and reinstall:
 
 ```bash
+# Note: These commands are for a bash-like shell (e.g., Git Bash on Windows).
 npm cache clean --force
 rm -rf node_modules package-lock.json
 npm install
@@ -140,10 +147,10 @@ npm install
 Verify the backend is running:
 
 ```bash
-curl http://localhost:8000/api/v1/categories
+curl http://127.0.0.1:8000/api/v1/categories
 ```
 
-Check .env.local has correct API URL:
+Check `.env.local` has the correct API URL:
 
 ```bash
 cat .env.local
@@ -156,13 +163,13 @@ REACT_APP_API_BASE_URL=http://localhost:8000/api/v1
 
 ### Authentication errors
 
-Clear browser localStorage and cookies. Open browser console (F12) and run:
+Clear browser `localStorage` and cookies. Open the browser console (F12) and run:
 
 ```javascript
-localStorage.clear()
+localStorage.clear();
 ```
 
-Then logout and login again.
+Then, log out and log in again.
 
 ### Docker issues
 
@@ -190,35 +197,35 @@ docker-compose up -d
 This frontend integrates with the TechSubs Laravel API. Main endpoints:
 
 Authentication:
-- POST /api/v1/login
-- POST /api/v1/register
-- POST /api/v1/logout
-- GET /api/v1/profile
+- `POST /api/v1/login`
+- `POST /api/v1/register`
+- `POST /api/v1/logout`
+- `GET /api/v1/profile`
 
 Services:
-- GET /api/v1/services
-- POST /api/v1/services
-- GET /api/v1/services/{id}
-- PUT /api/v1/services/{id}
-- DELETE /api/v1/services/{id}
+- `GET /api/v1/services`
+- `POST /api/v1/services`
+- `GET /api/v1/services/{id}`
+- `PUT /api/v1/services/{id}`
+- `DELETE /api/v1/services/{id}`
 
 Subscriptions:
-- GET /api/v1/subscriptions
-- POST /api/v1/subscriptions
-- GET /api/v1/subscriptions/{id}
-- PUT /api/v1/subscriptions/{id}
-- PATCH /api/v1/subscriptions/{id}/cancel
-- PATCH /api/v1/subscriptions/{id}/reactivate
-- DELETE /api/v1/subscriptions/{id}
+- `GET /api/v1/subscriptions`
+- `POST /api/v1/subscriptions`
+- `GET /api/v1/subscriptions/{id}`
+- `PUT /api/v1/subscriptions/{id}`
+- `PATCH /api/v1/subscriptions/{id}/cancel`
+- `PATCH /api/v1/subscriptions/{id}/reactivate`
+- `DELETE /api/v1/subscriptions/{id}`
 
 Reports:
-- GET /api/v1/reports/my-expenses
-- GET /api/v1/reports/my-expenses/export
+- `GET /api/v1/reports/my-expenses`
+- `GET /api/v1/reports/my-expenses/export`
 
 Categories:
-- GET /api/v1/categories
+- `GET /api/v1/categories`
 
-For complete API documentation, see the backend repository.
+For complete API documentation, see the [backend repository](https://github.com/leandrodsg/fullstackphp-sprint5).
 
 ## Technology Stack
 

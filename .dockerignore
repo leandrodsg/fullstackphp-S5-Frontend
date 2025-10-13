@@ -34,12 +34,7 @@ docs/
 .DS_Store
 Thumbs.db
 
-# Vercel
-.vercel
-.vercelignore
-vercel.json
-
-# OAuth keys (não devem estar no frontend)
+# OAuth keys
 oauth-private.key
 oauth-public.key
 cookies.txt

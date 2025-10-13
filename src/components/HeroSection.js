@@ -22,7 +22,7 @@ const HeroSection = () => {
             
             <p className="text-xl text-gray-700 mb-4 leading-relaxed">
               Made for developers and freelancers: monitor spending, avoid surprises and have total control over 
-              <span className="font-semibold text-purple-700">GitHub, Vercel, ChatGPT</span> and much more.
+              <span className="font-semibold text-purple-700">GitHub, Netflix, ChatGPT</span> and much more.
             </p>
           </div>
           
@@ -79,7 +79,7 @@ const HeroSection = () => {
                               <span className="text-white text-xs font-bold">▲</span>
                             </div>
                             <div>
-                              <div className="text-sm font-medium text-gray-900">Vercel Pro</div>
+                              <div className="text-sm font-medium text-gray-900">Netflix Pro</div>
                               <div className="text-xs text-gray-500">Hosting</div>
                             </div>
                           </div>

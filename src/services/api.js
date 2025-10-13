@@ -1,37 +1,16 @@
 import axios from 'axios';
 
-// Criando instância do axios
+// Configuração da API para desenvolvimento local
 const api = axios.create({
-  baseURL: process.env.REACT_APP_API_BASE_URL,
-  timeout: 30000,
+  baseURL: process.env.REACT_APP_API_BASE_URL || 'http://localhost:8000/api/v1',
+  timeout: 10000,
   headers: {
     'Content-Type': 'application/json',
     'Accept': 'application/json',
-    'X-Requested-With': 'XMLHttpRequest',
   },
-  withCredentials: false,
 });
 
-// Implementando lógica de retry para lidar com serviços Render em free tier
-api.interceptors.response.use(undefined, async (err) => {
-  const { config, message } = err;
-  
-  // Se não for um erro de timeout ou já tentou retry, rejeita normalmente
-  if (!message.includes('timeout') || config._retry) {
-    return Promise.reject(err);
-  }
-  
-  // Configuração para retry
-  config._retry = true;
-  config.timeout = 180000; // Aumenta ainda mais o timeout para retry
-  
-  // Espera 3 segundos antes de tentar novamente (para dar tempo do serviço "acordar")
-  await new Promise(resolve => setTimeout(resolve, 3000));
-  
-  // Tenta novamente com a mesma configuração
-  return axios(config);
-});
-
+// Interceptor para adicionar token automaticamente
 api.interceptors.request.use(
   (config) => {
     const token = localStorage.getItem('auth_token');
@@ -45,6 +24,7 @@ api.interceptors.request.use(
   }
 );
 
+// Interceptor para tratamento de respostas
 api.interceptors.response.use(
   (response) => response,
   (error) => {
@@ -54,7 +34,9 @@ api.interceptors.response.use(
       delete api.defaults.headers.common['Authorization'];
       
       // Redirect to login only if not already on login/register pages
-      if (!window.location.pathname.includes('/login') && !window.location.pathname.includes('/register')) {
+      const currentPath = window.location.pathname;
+      if (!currentPath.includes('/login') && 
+          !currentPath.includes('/register')) {
         window.location.href = '/login';
       }
     }

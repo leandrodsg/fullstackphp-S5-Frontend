@@ -19,98 +19,67 @@ export const AuthProvider = ({ children }) => {
   // Initialize auth state on app load
   useEffect(() => {
     const initializeAuth = async () => {
-      const savedToken = localStorage.getItem('auth_token');
-      if (savedToken) {
-        try {
-          api.defaults.headers.common['Authorization'] = `Bearer ${savedToken}`;
-          
-          const response = await api.get('/profile');
-          // API response structure: { success, message, data: { id, name, email, role } }
-          setUser(response.data.data);
-          setToken(savedToken);
-        } catch (error) {
-          console.error('Token validation failed:', error);
-          // Limpa tudo se o token estiver inválido (401) ou expirado (500)
-          if (error.response?.status === 401 || error.response?.status === 500) {
-            console.log('Clearing invalid/expired token');
-            localStorage.removeItem('auth_token');
-            delete api.defaults.headers.common['Authorization'];
-            setToken(null);
-            setUser(null);
-          }
-        }
+      const storedToken = localStorage.getItem('auth_token');
+      
+      if (!storedToken) {
+        setLoading(false);
+        return;
       }
-      setLoading(false);
+
+      setToken(storedToken);
+      api.defaults.headers.common['Authorization'] = `Bearer ${storedToken}`;
+
+      try {
+        const response = await api.get('/profile');
+        setUser(response.data.data);
+      } catch (error) {
+        console.error('Token validation failed:', error);
+        
+        // Clear invalid token
+        localStorage.removeItem('auth_token');
+        delete api.defaults.headers.common['Authorization'];
+        setUser(null);
+        setToken(null);
+      } finally {
+        setLoading(false);
+      }
     };
 
     initializeAuth();
   }, []);
 
-  const login = async (email, password, remember = false) => {
+  const login = async (email, password) => {
+    setLoading(true);
+    
     try {
-      const response = await api.post('/login', {
-        email,
-        password,
-        remember
-      });
+      const response = await api.post('/login', { email, password });
+      
+      const { token: authToken, user } = response.data.data;
 
-      // API response structure: { success, message, data: { user, token } }
-      if (response.data && response.data.success && response.data.data) {
-        const { token, user } = response.data.data;
-
-        // Store token
-        localStorage.setItem('auth_token', token);
-        
-        // Set token in API headers
-        api.defaults.headers.common['Authorization'] = `Bearer ${token}`;
-        
-        setToken(token);
-        setUser(user);
-
-        return { success: true, user };
-      }
-
-      // If response doesn't have expected structure
-      return {
-        success: false,
-        message: response.data?.message || 'Login failed. Invalid response from server.'
-      };
+      // Store token and set user
+      localStorage.setItem('auth_token', authToken);
+      api.defaults.headers.common['Authorization'] = `Bearer ${authToken}`;
+      setToken(authToken);
+      setUser(user);
+      
+      return { success: true, user };
     } catch (error) {
       console.error('Login failed:', error);
       
-      // Handle validation errors (422)
-      if (error.response?.status === 422) {
-        return {
-          success: false,
-          errors: error.response.data?.data || error.response.data?.errors || {},
-          message: error.response.data?.message || 'Validation failed'
-        };
-      }
+      // Clear any existing token
+      localStorage.removeItem('auth_token');
+      delete api.defaults.headers.common['Authorization'];
+      setUser(null);
+      setToken(null);
       
-      // Handle authentication errors (401)
-      if (error.response?.status === 401) {
-        return {
-          success: false,
-          message: error.response.data?.message || 'Invalid credentials. Please check your email and password.'
-        };
-      }
-
-      // Handle server errors (500)
-      if (error.response?.status === 500) {
-        const serverMsg = error.response?.data?.message || '';
-        return {
-          success: false,
-          message: serverMsg === 'Server Error' 
-            ? '🔧 Backend API error (500). The server may be starting up or experiencing issues. Please wait 30 seconds and try again.' 
-            : 'API is temporarily unavailable. Please try again later.'
-        };
-      }
-
-      // Generic error handling
+      // Return error details
       return {
         success: false,
-        message: error.response?.data?.message || error.message || 'Login failed. Please try again.'
+        message: error.response?.data?.message || 'Login failed',
+        errors: error.response?.data?.errors
       };
+    } finally {
+      setLoading(false);
     }
   };
 

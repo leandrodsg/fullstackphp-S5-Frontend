@@ -29,7 +29,7 @@ describe('LandingPage', () => {
     render(<LandingPage />);
     expect(screen.getByText(/github pro/i)).toBeInTheDocument();
     expect(screen.getByText(/chatgpt plus/i)).toBeInTheDocument();
-    expect(screen.getByText(/vercel pro/i)).toBeInTheDocument();
+    expect(screen.getByText(/netflix pro/i)).toBeInTheDocument();
   });
 
   test('renders footer with copyright', () => {
